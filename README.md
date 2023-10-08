@@ -1,5 +1,5 @@
 # Anggota Kelompok
-- Irfan Kamil 2206083400
+- Irfan Kamil - 2206083400
 - lanjutkan
 
 # Cerita aplikasi serta manfaatnya
