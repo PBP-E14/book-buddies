@@ -10,7 +10,7 @@
 # Cerita aplikasi serta manfaatnya :newspaper:
 Kami akan membuat aplikasi seperti “bandara”.  Akan ada loket tiket check-in, perpustakaan/reading area, café, daftar penerbangan, dan toko oleh-oleh. Aplikasi ini ditujukan agar penumpang tidak bosan saat menunggu boarding pesawat mereka. Setelah pengunjung check-in, ia bisa menunggu di café dan memesan makanan atau minuman. Pengunjung juga bisa menunggu di perpustakaan untuk membaca buku. Untuk memudahkan pengunjung men-track kapan pesawatnya akan berangkat, kami akan membuat fitur daftar penerbangan yang menampilkan data jam penerbangan, maskapai, tujuan, dan detail lainnya. Apabila pengunjung ingin check detail dan melakukan modifikasi pada profilenya, ia bisa melakukan hal tersebut di user profile page. 
 
-Apabila user tidak login, ia hanya bisa mengakses perpustakaan, café, dan daftar penerbangan. Apabila user yang tidak login ingin membeli sesuatu di café, akan muncul pop-up yang menunjukkan bahwa ia tidak bisa membeli makanan atau minuman tersebut dan diarahkan untuk login.  
+Apabila user tidak login, ia hanya bisa mengakses perpustakaan, café, dan daftar penerbangan. Apabila user yang tidak login ingin membeli sesuatu di café, akan muncul pop-up yang menunjukkan bahwa ia tidak bisa membeli makanan atau minuman tersebut dan diarahkan untuk login.
 
 User yang sudah login bisa mengakses semua fitur. Untuk membeli makanan atau minuman di café, ia bisa menggunakan saldo yang ia punya. Apabila tidak cukup, user bisa melakukan top-up saldo pada halaman user profile page. Pengunjung yang ingin melakukan check-in bisa ke loket check-in untuk melihat daftar penerbangan dan memilih penerbangan mana yang ia akan check-in. 
 
@@ -20,7 +20,7 @@ User yang sudah login bisa mengakses semua fitur. Untuk membeli makanan atau min
 Fitur ini hanya dapat diakses apabila pengguna sudah login ke aplikasi. Pada halaman check-in ini dimanfaatkan form yang meminta pengguna untuk mengisi data yang dibutuhkan dalam melakukan check in, yaitu penerbangan yang sudah dipesan, data diri seperti nama lengkap, tempat dan tanggal lahir, dan berat bagasi. Data-data tersebut akan disimpan pada model penumpang sehingga penumpang yang sudah check in tidak dapat melakukan check in lagi. Setelah berhasil check in, halaman akan berpindah ke halaman sukses check in yang akan menampilkan QR untuk verifikasi check in ke petugas di bandara. 
 
 ### :books: Perpustakaan
-Terdapat kumpulan buku-buku yang dapat dipinjam oleh pengunjung. Pengunjung hanya bisa meminjam buku, sedangkan admin dapat menambahkan dan menghapus buku. 
+Terdapat kumpulan buku-buku yang dapat dipinjam oleh pengunjung. Pengunjung hanya bisa meminjam buku apabila sudah login, jika belum maka pengunjung hanya dapat melihat-lihat saja. Admin dapat menambahkan dan menghapus buku. 
 
 ### :coffee: Café
 Terdapat katalog yang menampilkan menu-menu yang dijual beserta harganya. Pengunjung dapat memasukkan menu ke dalam keranjang dan hanya bisa check-out/membeli menu tersebut apabila saldo mencukupi.  
