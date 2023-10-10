@@ -41,7 +41,7 @@ Tipe (Makanan, minuman, snack), Harga
 ### Penerbangan: 
 Jam berangkat, status penerbangan (boarding, take-off, dll), tujuan penerbangan, kode penerbangan, dan terminal/pintu keberangkatan. 
 ### Perpustakaan: 
-Judul buku, penulis, penerbit, tahun terbit 
+Judul buku, penulis, penerbit, tahun terbit, cover
 
 # :green_book: Sumber dataset katalog buku
 https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset 
