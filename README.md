@@ -43,7 +43,7 @@ User yang sedang log in, judul buku, isi review
 ### Wishlist: 
 Judul buku, penulis, penerbit, tahun terbit, tautan (shortlink), dan user yang sedang log in
 ### Buku: 
-Judul buku, penulis, penerbit, tahun terbit, cover
+Judul buku, penulis, penerbit, tahun terbit, cover buku
 
 # :green_book: Sumber dataset katalog buku
 https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset 
