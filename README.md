@@ -8,47 +8,48 @@
 - Rizky Prawira Negoro - 2206030956 
 
 # Cerita aplikasi serta manfaatnya :newspaper:
-Kami akan membuat aplikasi seperti “bandara”.  Akan ada loket tiket check-in, perpustakaan/reading area, café, daftar penerbangan, dan toko oleh-oleh. Aplikasi ini ditujukan agar penumpang tidak bosan saat menunggu boarding pesawat mereka. Setelah pengunjung check-in, ia bisa menunggu di café dan memesan makanan atau minuman. Pengunjung juga bisa menunggu di perpustakaan untuk membaca buku. Untuk memudahkan pengunjung men-track kapan pesawatnya akan berangkat, kami akan membuat fitur daftar penerbangan yang menampilkan data jam penerbangan, maskapai, tujuan, dan detail lainnya. Apabila pengunjung ingin check detail dan melakukan modifikasi pada profilenya, ia bisa melakukan hal tersebut di user profile page. 
+Kami akan membuat aplikasi book club bernama Book Buddies. Pada aplikasi kami akan ada katalog buku, dimana user bisa melihat-lihat buku yang tersedia. Akan ada detail buku seperti judul, penulis, tahun terbit, dan penerbit. Lalu, apabila user ingin menandakan buku untuk dibaca di kemudian hari, user bisa menandakannya dan bisa cek buku apa saja yang sudah ditandai untuk dibaca di halaman wishlist.  
 
-Apabila user tidak login, ia hanya bisa mengakses perpustakaan, café, dan daftar penerbangan. Apabila user yang tidak login ingin membeli sesuatu di café, akan muncul pop-up yang menunjukkan bahwa ia tidak bisa membeli makanan atau minuman tersebut dan diarahkan untuk login.
+User yang ingin memberikan ulasan untuk suatu buku bisa melakukannya dalam fitur review yang kami buat. User lain bisa melihat review yang sudah di post oleh user lain. Karena aplikasi kami adalah book club, kami akan membuat forum diskusi agar para user bisa mendiskusikan topik-topik terkait buku yang sedang dibaca, buku yang sedang populer, dan lainnya.  
 
-User yang sudah login bisa mengakses semua fitur. Untuk membeli makanan atau minuman di café, ia bisa menggunakan saldo yang ia punya. Apabila tidak cukup, user bisa melakukan top-up saldo pada halaman user profile page. Pengunjung yang ingin melakukan check-in bisa ke loket check-in untuk melihat daftar penerbangan dan memilih penerbangan mana yang ia akan check-in. 
+Aplikasi kami juga ada user profile page yang menampilkan data user seperti nama, tanggal lahir, nomor telepon, email, domisili, dan bio. Akan ada history buku-buku yang sudah dibaca oleh user. 
 
-## Deskripsi Fitur-Fitur dalam Aplikasi :calling:
+"Book Buddies" menawarkan platform yang komprehensif bagi para pecinta buku untuk menjelajahi, berbagi, dan mendiskusikan bacaan mereka dengan komunitas yang bersemangat. Dengan berbagai fitur yang mendukung, aplikasi ini dapat meningkatkan minat baca user dan memperkaya pengalaman literasi mereka. Melalui diskusi dan interaksi di forum, user dapat membangun network dengan pembaca lain yang memiliki minat dan selera yang serupa.
 
-### :ticket: Loket Check-In 
-Fitur ini hanya dapat diakses apabila pengguna sudah login ke aplikasi. Pada halaman check-in ini dimanfaatkan form yang meminta pengguna untuk mengisi data yang dibutuhkan dalam melakukan check in, yaitu penerbangan yang sudah dipesan, data diri seperti nama lengkap, tempat dan tanggal lahir, dan berat bagasi. Data-data tersebut akan disimpan pada model penumpang sehingga penumpang yang sudah check in tidak dapat melakukan check in lagi. Setelah berhasil check in, halaman akan berpindah ke halaman sukses check in yang akan menampilkan QR untuk verifikasi check in ke petugas di bandara. 
+## Daftar dan Deskripsi Modul dalam Aplikasi :calling:
 
-### :books: Perpustakaan
-Terdapat kumpulan buku-buku yang dapat dipinjam oleh pengunjung. Pengunjung hanya bisa meminjam buku apabila sudah login, jika belum maka pengunjung hanya dapat melihat-lihat saja. Admin dapat menambahkan dan menghapus buku. 
+### 💬 Forum Diskusi 
+Cara kerja forum diskusi pada aplikasi kami sebenarnya mirip dengan forum diskusi di kebanyakan aplikasi. Setiap pengguna dapat mengirimkan pesan dan terdapat beberapa pilihan diskusi yang dapat dipilih pengguna. Pilihan diskusi dapat ditambahkan oleh semua user. Tampilan pada fitur ini adalah massage-massage box yang berisi pesan-pesan para pengguna.
 
-### :coffee: Café
-Terdapat katalog yang menampilkan menu-menu yang dijual beserta harganya. Pengunjung dapat memasukkan menu ke dalam keranjang dan hanya bisa check-out/membeli menu tersebut apabila saldo mencukupi.  
+### :books: Katalog buku
+Berisi kumpulan buku dan detail dari buku tersebut. Kumpulan buku dapat ditambah, kurang, dan edit dengan admin.
 
-### :flight_departure: Daftar Penerbangan 
-Menampilkan list dalam bentuk tabel untuk jadwal penerbangan pesawat. Pada list ini akan menampilkan data-data seperti jam berangkat, status penerbangan (boarding, take-off, dll), tujuan penerbangan, kode penerbangan, dan terminal/pintu keberangkatan. 
+### 🧾 Review
+User dapat memberikan ulasan terhadap suatu buku yang telah dibacanya. Selain itu, User juga dapat membaca ulasan-ulasan yang telah diberikan oleh user lain.
+
+### 🔖 Wishlist 
+Dapat diakses ketika terdapat logged in user. Wishlist akan menampilkan tabel yang berisi judul buku, penulis, tahun terbit, penerbit, dan tautan (shortlink) ke fitur perpustakaan.
 
 ### :man_office_worker: User profile page
-Menampilkan data pengunjung, tiket yang sudah di check-in, saldo, dan bisa melakukan top-up saldo. User bisa memodifikasi profilenya pada bagian ini. 
+Menampilkan data user seperti nama, gender, nomor telepon, email, alamat, tanggal lahir, dan bio. User bisa mengubah data pada halaman ini. User juga bisa melihat buku-buku yang sudah pernah ia baca pada bagian history.
 
-# :briefcase: Daftar modul
+# :briefcase: Daftar model
 ### User: 
-Nama, gender, nomor telepon, email, alamat, tanggal lahir, saldo, tiket yang di check-in, password 
-### Penumpang: 
-Penerbangan yang dinaiki, nama lengkap, tempat dan tanggal lahir, berat bagasi penumpang, QR check-in penumpang. 
-### Menu: 
-Tipe (Makanan, minuman, snack), Harga 
-### Penerbangan: 
-Jam berangkat, status penerbangan (boarding, take-off, dll), tujuan penerbangan, kode penerbangan, dan terminal/pintu keberangkatan. 
-### Perpustakaan: 
+nama, gender, nomor telepon, email, alamat, tanggal lahir, buku yang pernah dibaca, password
+### Message: 
+Tipe diskusi, Tanggal Upload, Jumlah Balasan
+### Review: 
+User yang sedang log in, judul buku, isi review
+### Wishlist: 
+Judul buku, penulis, penerbit, tahun terbit, tautan (shortlink), dan user yang sedang log in
+### Buku: 
 Judul buku, penulis, penerbit, tahun terbit, cover
 
 # :green_book: Sumber dataset katalog buku
 https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset 
 
 # :customs: Role user
-Pada aplikasi ini, kami hanya membuat dua role untuk pengguna, yaitu
 ## Pengunjung: 
-Dapat mengakses aplikasi dengan login maupun tidak login. Jika pengunjung login, maka Ia dapat mengakses semua fitur yang tersedia pada aplikasi. Akan tetapi, jika pengunjung tidak login, pengunjung memiliki akses yang terbatas pada fitur, yaitu hanya dapat mengakses halaman cafe tanpa dapat membeli, mengakses halaman perpustakaan, dan halaman daftar penerbangan. 
+Dapat mengakses aplikasi dengan login maupun tidak login. Jika pengunjung login, maka Ia dapat mengakses semua fitur yang tersedia pada aplikasi. Akan tetapi, jika pengunjung tidak login, pengunjung memiliki akses yang terbatas pada fitur, yaitu hanya dapat mengakses halaman katalog buku dan forum (hanya bisa melihat, tidak bisa menambahkan post ke forum).
 ## Admin: 
-Untuk admin, tidak dapat mengakses halaman check in, akan tetapi dapat mengatur data penumpang yang sudah check-in, lalu data-data lainnya pada model dapat dimodifikasi oleh admin dengan mengakses setiap halaman yang menampilkan model tersebut dan mengklik tombol edit. 
+Hanya bisa mengubah katalog buku (create, edit, dan delete).
