@@ -1,0 +1,72 @@
+body {
+    background: #BFD7EA;
+}
+
+footer {
+    width: 100%;
+    display: block;
+    clear: both;
+    background: #3E4C5E;
+}
+
+.form-group {
+    margin: 15px;
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #89cff2;
+}
+
+.profile-button {
+    background: #EFA7A7;
+    box-shadow: none;
+    border: none;
+}
+
+.profile-button:hover {
+    background: #FCBCB8;
+}
+
+.profile-button:focus {
+    background: #EFA7A7;
+    box-shadow: none;
+}
+
+.profile-button:active {
+    background: #FCBCB8;
+    box-shadow: none;
+}
+
+.back:hover {
+    color: #3E4C5E;
+    cursor: pointer;
+}
+
+.labels {
+    font-size: 11px;
+}
+
+.add-experience:hover {
+    background: #BA68C8;
+    color: #fff;
+    cursor: pointer;
+    border: solid 1px #BA68C8;
+}
+
+.btn-custom {
+    background-color: #EFA7A7; 
+    color: #fff;        
+    border-radius: 5px;  
+    padding: 10px 20px;     
+    transition: 0.3s;        
+}
+
+.btn-custom:hover {
+    background-color: #BFD7EA;  
+    text-decoration: none; 
+}
+
+.btn-custom .bi {
+    margin-right: 8px;  
+}
