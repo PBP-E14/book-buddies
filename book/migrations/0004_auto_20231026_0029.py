@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
         call_command("loaddata", "initial_books.json")
 
     dependencies = [
-        ("book", ""),
+        ("book", "0003_initial"),
     ]
 
     operations = [migrations.RunPython(load_initial_books)]
