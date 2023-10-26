@@ -1,7 +1,7 @@
 name: Fly Deploy
 
 env:
-    ENV: ${{ secrets.ENV }}
+    ENV: ${{ secrets.ENVIRONMENT }}
 
 on:
     push:

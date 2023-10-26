@@ -96,7 +96,7 @@ DATABASES = {
 }
 
 
-if env("ENV") == "production":
+if env("ENVIRONMENT") == "production":
     # DATABASES["default"] = {
     #     "ENGINE": "django.db.backends.postgresql",
     #     "USER": env("USER"),
