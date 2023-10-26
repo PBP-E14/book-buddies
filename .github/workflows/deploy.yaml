@@ -1,16 +1,44 @@
-name: Fly Deploy
+name: Deploy to Vercel Development
 
 on:
-    push:
+    pull_request:
         branches:
-            - main
+            - development
+
 jobs:
     deploy:
-        name: Deploy app
         runs-on: ubuntu-latest
+
         steps:
-            - uses: actions/checkout@v3
-            - uses: superfly/flyctl-actions/setup-flyctl@master
-            - run: flyctl deploy --remote-only
-              env:
-                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Deploy to Vercel
+              uses: amondnet/vercel-action@v20
+              with:
+                  vercel-token: ${{ secrets.VERCEL_TOKEN }}
+                  vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} # Replace with your Vercel team ID
+                  vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+              id: deploy-vercel
+
+            - name: Extract deployment URL
+              id: get-url
+              run: |
+                  deployment_url=$(curl -s -X GET \
+                    -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+                    "https://api.vercel.com/v6/deployments?teamId=${{ secrets.VERCEL_ORG_ID }}&projectId=${{ secrets.VERCEL_PROJECT_ID }}" | jq -r '.deployments[0].url')
+                  echo "url=${deployment_url}" >> "$GITHUB_ENV"
+
+            - name: Comment deployment URL
+              uses: actions/github-script@v5
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
+                  script: |
+                      const url = 'https://${{ env.url }}';
+                      const pullRequestNumber = context.payload.pull_request.number;
+                      github.rest.issues.createComment({
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        issue_number: pullRequestNumber,
+                        body: `Preview URL: ${url}`
+                      });
