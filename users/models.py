@@ -8,7 +8,7 @@ class User(AbstractUser):
         ('Other', 'Other'),
     ]
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES)
-    birth_date = models.DateField()
+    birth_date = models.DateField(blank=True, null=True)
     phone_number = models.CharField(max_length=15)
     address = models.TextField()
     bio = models.TextField(blank=True)
