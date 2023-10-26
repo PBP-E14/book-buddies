@@ -58,33 +58,33 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('registerForm');
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registerForm');
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        const formData = new FormData(form);
+            const formData = new FormData(form);
 
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = "/user/login/";
-            } else {
-                for (const [field, messages] of Object.entries(data.errors)) {
-                    const fieldErrors = messages.join(', ');
-                    alert(`${field}: ${fieldErrors}`);
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
-            }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "/user/login/";
+                } else {
+                    for (const [field, messages] of Object.entries(data.errors)) {
+                        const fieldErrors = messages.join(', ');
+                        alert(`${field}: ${fieldErrors}`);
+                    }
+                }
+            });
         });
     });
-});
 </script>
 {% endblock %}
