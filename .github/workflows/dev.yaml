@@ -31,5 +31,19 @@ jobs:
             - name: Install Requirements
               run: pip install -r requirements.txt
 
-            - name: Run Django Server
-              run: python manage.py runserver
+            - name: Check if Django Application is Running
+              id: check_status
+              run: |
+                  if [ python manage.py runserver ]; then
+                      echo "Application is running."
+                      echo "::set-output name=app_running::true"
+                  else
+                      echo "Application is not running."
+                      echo "::set-output name=app_running::false"
+                  fi
+
+            - name: End Job If App is Running
+              if: steps.check_status.outputs.app_running == 'true'
+              run: |
+                  echo "Exiting job because the application is already running."
+                  exit 0
