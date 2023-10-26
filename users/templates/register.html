@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Register</div>
+                <div class="card-body">
+                    <form id="registerForm" method="post" action="{% url 'register' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_username">Username:</label>
+                            <input type="text" name="username" class="form-control" id="id_username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_email">Email:</label>
+                            <input type="email" name="email" class="form-control" id="id_email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_password1">Password:</label>
+                            <input type="password" name="password1" class="form-control" id="id_password1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_password2">Confirm Password:</label>
+                            <input type="password" name="password2" class="form-control" id="id_password2" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_gender">Gender:</label>
+                            <select name="gender" class="form-control" id="id_gender">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_birth_date">Birth Date:</label>
+                            <input type="date" name="birth_date" class="form-control" id="id_birth_date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_phone_number">Phone Number:</label>
+                            <input type="text" name="phone_number" class="form-control" id="id_phone_number">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_address">Address:</label>
+                            <textarea name="address" class="form-control" id="id_address"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_bio">Bio:</label>
+                            <textarea name="bio" class="form-control" id="id_bio"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registerForm');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "/user/login/";
+                } else {
+                    for (const [field, messages] of Object.entries(data.errors)) {
+                        const fieldErrors = messages.join(', ');
+                        alert(`${field}: ${fieldErrors}`);
+                    }
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
