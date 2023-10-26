@@ -16,20 +16,27 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v2
 
-            - name: Update Ubuntu
-              run: sudo apt-get update
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.10 # Choose your Python version
 
-            - name: Install Python
-              run: sudo apt-get install python3.6
-
-            - name: Install venv
-              run: python3 -m venv env
-
-            - name: Navigate To venv
-              run: source env/bin/activate
-
-            - name: Install Requirements
+            - name: Install dependencies
               run: pip install -r requirements.txt
+
+            - name: Start Django server
+              run: |
+                  python manage.py runserver 0.0.0.0:8000 &
+
+            - name: Build Docker image
+              run: docker build -t book-buddies .
+
+            - name: Run Docker container
+              run: docker run -d -p 8000:8000 --name book-buddies book-buddies
+
+            # Add a step to send a termination signal when needed
+            - name: Terminate Django server
+              run: kill -TERM $(lsof -t -i:8000)
 
             - name: Deployment Checklist
               run: python manage.py check --deploy
