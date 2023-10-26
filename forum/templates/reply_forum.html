@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block content %}
 <header>
@@ -32,26 +31,26 @@
             padding-block: 20px;
         }
 
+        h6 {
+            color: gray;
+        }
+
+        #date {
+            color: gray;
+            text-align: end;
+        }
+
         table {
             border-collapse: collapse;
         }
 
         td {
-            border-block: 2px solid gray;
+            border-block-end: 1px solid gray;
             padding: 8px;
         }
 
-        #reply-info {
-            text-align: center;
-            color: gray;
-        }
-
-        h6, #date {
-            color: grey;
-        }
-
-        .add-forum-btn {
-            align-items: center;
+        .replies {
+            margin-block-start: 15px;
         }
     </style>
 
@@ -84,63 +83,55 @@
                 </ul>
             </div>
             <div class="add-forum-btn">
-                <a href="{% url 'back_to_homepage' %}">
+                <a href="{% url 'show_forums' %}">
                     <button type="button" class="btn btn-warning">Back</button>
                 </a>
             </div>
         </div>
     </nav>
 </header>
+
 <body>
     <div class="content wrapper">
-        {% if forums|length > 0 %}
-            <h3>Forum Terkini:</h2>
-            <table>
-                {% for forum in forums %}
-                <tr>
-                    <td id="reply-info">
-                        <p>Reply 
-                        <br>{{ forum.reply_count }}
-                        </p>
-                    </td>
-                    <td>
-                        <h5>{{ forum.title }}</h4>
-                        <h6>Posted by: {{ forum.user.username }}</h6>
-                        <p>{{ forum.content|slice:":300" }}{% if forum.content|length > 300 %}...{% endif %}
-                            <br> {{ forum.created_at }}
-                        </p>
-                    </td>
-                    <td>
-                        <a href="{% url 'read_forum' forum.pk %}">
-                            <button type="button" class="btn btn-info">Lihat</button>
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
-            <div class="text-center">
-                <a href="{% url 'create_forum' %}">
-                    <button type="button" class="btn btn-outline-primary btn-lg" style="margin-block-start: 15px;">Tambah Forum</button>
-                </a>
+        <table>
+            <tr>
+                <td>
+                    <h2>{{ forum.title }}</h2>
+                    <h6>Posted by: {{ forum.user.username }}</h6>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p style="padding-bottom: 0px;">{{ forum.content }}</p>
+                    <p id="date">Posted on: {{ forum.created_at }}</p>
+                </td>
+            </tr>
+        </table>
+
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">New Reply</div>
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <button type="submit" class="btn btn-primary">Post</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-        {% else %}
-            <div class="text-center">
-                <h3>Belum ada forum yang di post.</h3>
-                <a href="{% url 'create_forum' %}">
-                    <button type="button" class="btn btn-primary btn-lg">Tambah Forum</button>
-                </a>
-            </div>
-        {% endif %}
+        </div>
     </div>
 </body>
 
 <footer style="width: 100%; clear: both;">
-    <div class="container-fluid text-white py-3">
-        <div class="container text-center">
-            <p>&copy; 2023 Book Buddies. All rights reserved.</p>
-        </div>
+<div class="container-fluid text-white py-3">
+    <div class="container text-center">
+        <p>&copy; 2023 Book Buddies. All rights reserved.</p>
     </div>
+</div>
 </footer>
-
 {% endblock %}

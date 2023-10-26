@@ -9,4 +9,6 @@ class Forum(models.Model):
 
 class Reply(models.Model):
     content = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     forum_id = models.ForeignKey(Forum, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
