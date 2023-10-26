@@ -13,11 +13,11 @@ jobs:
             - name: Install Fly
               run: curl -L https://fly.io/install.sh | sh
 
+            - name: Deploy to Fly
+              run: FLY_API_TOKEN=$(/home/runner/.fly/bin/flyctl tokens create deploy) /home/runner/.fly/bin/flyctl deploy
+
             - name: Build Docker image
               run: |
                   docker build \
                   --build-arg ENVIRONMENT=${{ secrets.ENVIRONMENT }} \
                   -t my-app .
-
-            - name: Deploy to Fly
-              run: /home/runner/.fly/bin/flyctl deploy
