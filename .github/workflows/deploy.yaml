@@ -1,23 +1,19 @@
-name: Deploy to Fly.io
+name: Fly Deploy
+
+env:
+    ENV: ${{ secrets.ENVIRONMENT }}
+
 on:
     push:
         branches:
             - main
 jobs:
-    Deploy:
+    deploy:
+        name: Deploy app
         runs-on: ubuntu-latest
         steps:
-            - name: Cloning repo
-              uses: actions/checkout@v4
-
-            - name: Install Fly
-              run: curl -L https://fly.io/install.sh | sh
-
-            - name: Deploy to Fly
-              run: FLY_API_TOKEN=$(/home/runner/.fly/bin/flyctl tokens create deploy) /home/runner/.fly/bin/flyctl deploy
-
-            - name: Build Docker image
-              run: |
-                  docker build \
-                  --build-arg ENVIRONMENT=${{ secrets.ENVIRONMENT }} \
-                  -t my-app .
+            - uses: actions/checkout@v3
+            - uses: superfly/flyctl-actions/setup-flyctl@master
+            - run: flyctl deploy --remote-only -e "ENVIRONMENT=${{ secrets.ENVIRONMENT }}"
+              env:
+                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
