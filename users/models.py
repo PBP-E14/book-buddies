@@ -11,4 +11,4 @@ class User(AbstractUser):
     birth_date = models.DateField()
     phone_number = models.CharField(max_length=15)
     address = models.TextField()
-    bio = models.TextField(blank=True)    
+    bio = models.TextField(blank=True)
