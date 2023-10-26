@@ -15,6 +15,9 @@ jobs:
             - name: Install Fly
               run: curl -L https://fly.io/install.sh | sh
 
+            - name: Fly help
+              run: fly help
+
             - name: Launch Fly
               run: fly launch
 
