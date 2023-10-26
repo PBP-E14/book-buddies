@@ -1,16 +1,22 @@
-name: Fly Deploy
+name: Deploy to Vercel Main
 
 on:
     push:
         branches:
             - main
+
 jobs:
     deploy:
-        name: Deploy app
         runs-on: ubuntu-latest
+
         steps:
-            - uses: actions/checkout@v3
-            - uses: superfly/flyctl-actions/setup-flyctl@master
-            - run: flyctl deploy --remote-only
-              env:
-                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Deploy to Vercel
+              uses: amondnet/vercel-action@v20
+              with:
+                  vercel-token: ${{ secrets.VERCEL_TOKEN }}
+                  vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} # Replace with your Vercel team ID
+                  vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+                  vercel-args: "--prod"
