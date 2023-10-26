@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0001_initial'),
+        ("users", "0008_remove_user_profile_picture"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='birth_date',
+            model_name="user",
+            name="birth_date",
             field=models.DateField(blank=True, null=True),
         ),
     ]
