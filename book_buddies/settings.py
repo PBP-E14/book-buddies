@@ -12,9 +12,19 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url
+import environ
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -24,7 +34,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-lezz%#xm6th2-mljj&el0-)t@q*k6a=%(@lfmie@9!a^q&9d^="
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
+
 
 ALLOWED_HOSTS = ["*"]
 
@@ -83,6 +94,23 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+
+if env("ENV") == "production":
+    # DATABASES["default"] = {
+    #     "ENGINE": "django.db.backends.postgresql",
+    #     "USER": env("USER"),
+    #     "NAME": env("NAME"),
+    #     "PASSWORD": env("PASSWORD"),
+    #     "HOST": env("HOST"),
+    #     "PORT": env("PORT"),
+    # }
+
+    DATABASES["default"] = dj_database_url.config(
+        default=env.db(),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 
 
 # Password validation
