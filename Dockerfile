@@ -22,9 +22,7 @@ RUN set -ex && \
     rm -rf /root/.cache/
 COPY . /code
 
-ENV SECRET_KEY "FZoiBJ3rAWAiS3vpxoUMcasS6TTFhpViMD9USdWEqywj3VLBGl"
-ENV ENVIRONMENT=$ENVIRONMENT
-ENV DATABASE_URL=$DATABASE_URL
+ENV SECRET_KEY "NZfcMnZNKmCqxBUooAA5uiCqC4AjTuXb6b53PY7tpvIWuG0nYJ"
 ENV DEBUG=$DEBUG
 RUN python manage.py collectstatic --noinput
 

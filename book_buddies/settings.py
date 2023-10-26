@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
-import dj_database_url
 import environ
 
 
@@ -94,23 +93,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
-
-if env("ENVIRONMENT") == "production":
-    # DATABASES["default"] = {
-    #     "ENGINE": "django.db.backends.postgresql",
-    #     "USER": env("USER"),
-    #     "NAME": env("NAME"),
-    #     "PASSWORD": env("PASSWORD"),
-    #     "HOST": env("HOST"),
-    #     "PORT": env("PORT"),
-    # }
-
-    DATABASES["default"] = dj_database_url.config(
-        default=env.db(),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
 
 
 # Password validation
