@@ -19,7 +19,7 @@ jobs:
               run: /home/runner/.fly/bin/flyctl --help
 
             - name: Launch Fly
-              run: flyctl launch
+              run: /home/runner/.fly/bin/flyctl launch
 
             - name: Deploy to Fly
-              run: flyctl deploy
+              run: /home/runner/.fly/bin/flyctl deploy
