@@ -1,25 +1,15 @@
-name: Deploy to Fly.io
-
+name: Fly Deploy
 on:
     push:
         branches:
             - main
-
 jobs:
-    Deploy:
+    deploy:
+        name: Deploy app
         runs-on: ubuntu-latest
         steps:
-            - name: Cloning repo
-              uses: actions/checkout@v4
-
-            - name: Install Fly
-              run: curl -L https://fly.io/install.sh | sh
-
-            - name: Fly help
-              run: /home/runner/.fly/bin/flyctl --help
-
-            - name: Launch Fly
-              run: /home/runner/.fly/bin/flyctl launch
-
-            - name: Deploy to Fly
-              run: /home/runner/.fly/bin/flyctl deploy
+            - uses: actions/checkout@v3
+            - uses: superfly/flyctl-actions/setup-flyctl@master
+            - run: flyctl deploy --remote-only
+              env:
+                  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
