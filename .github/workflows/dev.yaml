@@ -38,12 +38,6 @@ jobs:
               run: |
                   python manage.py runserver 0.0.0.0:8000 &
 
-            - name: Build Docker image
-              run: docker build -t book-buddies .
-
-            - name: Run Docker container
-              run: docker run -d -p 8000:8000 --name book-buddies book-buddies
-
             # Add a step to send a termination signal when needed
             - name: Terminate Django server
               run: kill -TERM $(lsof -t -i:8000)
