@@ -12,5 +12,11 @@ jobs:
             - name: Cloning repo
               uses: actions/checkout@v4
 
+            - name: Install Fly
+              run: curl -L https://fly.io/install.sh | sh
+
+            - name: Launch Fly
+              run: fly launch
+
             - name: Deploy to Fly
               run: fly deploy
