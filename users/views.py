@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from book.models import Book
 from .models import User
-from django.core.files.storage import FileSystemStorage
+from django.urls import reverse
+from django.shortcuts import get_object_or_404
 
 def register(request):
     if request.method == 'POST':
@@ -20,7 +22,7 @@ def register(request):
 
         errors = {}
 
-        # Validate data manually
+        # Validate data 
         if User.objects.filter(username=username).exists():
             errors['username'] = ['Username already exists.']
 
@@ -63,8 +65,10 @@ def register(request):
 def user_profile(request):
     user = request.user
     user.birth_date_str = user.birth_date.strftime('%Y-%m-%d') if user.birth_date else ''
+    user_books = request.user.history_books.all()
     context = {
-        'user': user
+        'user': user,
+        'user_books': user_books,
     }
     return render(request, 'profile.html', context)
 
@@ -80,3 +84,12 @@ def update_profile(request):
         user.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
+def delete_book(request, book_id):
+    user = request.user
+    try:
+        book = get_object_or_404(Book, id=book_id)
+        user.history_books.remove(book)
+        return HttpResponseRedirect(reverse('profile')) 
+    except Book.DoesNotExist:
+        return HttpResponseRedirect(reverse('profile'))  
