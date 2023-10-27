@@ -18,7 +18,6 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
-@login_required(login_url='')
 def show_wishlist(request):
     wishlists = Wishlist.objects.filter(user=request.user)
 
@@ -26,7 +25,17 @@ def show_wishlist(request):
         'wishlists': wishlists,
     }
 
-    return render(request, "main.html", context)
+    return render(request, "show_wishlist.html", context)
 
-def show_info(request):
-    context = {}
+@csrf_exempt
+def remove_item(request, item_id):
+    if request.method == 'DELETE':
+        item = Item.objects.get(pk=item_id)
+        item.user = request.user
+        item.delete()
+        return HttpResponse(b"REMOVED", status=201)
+    return HttpResponseNotFound()
+
+def get_item_json(request):
+    product_item = Item.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', product_item))
