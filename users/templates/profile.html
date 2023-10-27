@@ -79,27 +79,7 @@
             </div>
         <!-- History Books -->
         <div class="col-md-3">
-            <h4>Books You Have Read</h4>
-            <div class="card-columns">
-                {% for book in user_books %}
-                <div class="card" id="book-{{ book.id }}">
-                    <img src="{{ book.image_cover }}" class="card-img-top" alt="{{ book.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ book.title }}</h5>
-                        <p class="card-text">Author: {{ book.author }}</p></br>
-                        <p class="card-text">Publisher: {{ book.publisher }}</p></br>
-                        <p class="card-text">Year: {{ book.year_publication }}</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="{% url 'delete_book' book.id %}" class="btn btn-danger btn-sm">
-                            <i class="bi bi-journal-minus"></i>
-                        </a>
-                    </div>
-                </div>
-                {% empty %}
-                <p>You have not read any books yet.</p>
-                {% endfor %}
-            </div>
+            <!-- Bakal diisi buku-buku yang sudah pernah dibaca -->
         </div>
     </div>
 </body>
