@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Wish List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+
+    <style>
+        .light-red {
+            background-color: #FFDDDD;
+        }
+        .light-green {
+            background-color: #CCFFCC;
+        }
+        body {
+          background: linear-gradient(180deg, #ebf4f5, #b5c6e0);
+          background-size: 100% 100%;
+          background-repeat: no-repeat;
+          background-attachment: fixed;
+          background-position: center;
+          background-size: cover;
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+              <br>
+                <h1 class="text-center mb-5">My Wish List</h1>
+            </div>
+        </div>
+
+        <div class="row" id="wishlist">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js">
+        async function getItems() {
+            return fetch("{% url 'wishlist:get_item_json' %}").then((res) => res.json())
+        }
+
+        async function refreshItems() {
+            document.getElementById("wishlist").innerHTML = ""
+            const items = await getItems()
+            let htmlString = `
+            <tr style="text-align: center;">
+                <th style="width: 125px;">Name</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th style="width: 125px;">Date Added</th>
+                <th>Actions</th>
+            </tr>
+            `
+            items.forEach((item) => {
+                htmlString += `
+                <tr>
+                    <td>${item.fields.name}</td>
+                    <td>${item.fields.amount}</td>
+                    <td style="text-align: justify;">${item.fields.description}</td>
+                    <td>${item.fields.date_added}</td>
+                    <td>
+                        <div class="btn-display">
+                            <a>
+                                <button type="submit" class="btn btn-outline-warning btn-sm edit-item-btn" onclick="addAmount(${item.pk})">+</button>
+                            </a>
+                            <a>
+                                <button type="submit" class="btn btn-outline-warning btn-sm edit-item-btn" onclick="reduceAmount(${item.pk})">-</button>
+                            </a>
+                            <a>
+                                <button type="submit" class="btn btn-outline-danger btn-sm edit-item-btn" onclick="removeItem(${item.pk})">Remove</button>
+                            </a>
+                        </div>
+                    </item></td>
+                </tr>
+            `
+            })
+
+            document.getElementById("item_table").innerHTML = htmlString
+        }
+
+        refreshItems()
+
+        function removeItem(item_id) {
+            fetch(`remove_item/${item_id}/`, {
+                method: "DELETE",
+            }).then(refreshItems)
+            return false
+        }
+    </script>
+</body>
+</html>

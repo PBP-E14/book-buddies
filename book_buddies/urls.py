@@ -23,5 +23,6 @@ urlpatterns = [
     path("user/", include("users.urls")),
     path("forum/", include("forum.urls")),
     path("book/", include("book.urls")),
-    path("review/", include ("review.urls"))
+    path("review/", include ("review.urls")),
+    path('wishlist/', include('wishlist.urls')),
 ]
