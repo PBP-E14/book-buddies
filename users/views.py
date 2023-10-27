@@ -63,8 +63,10 @@ def register(request):
 def user_profile(request):
     user = request.user
     user.birth_date_str = user.birth_date.strftime('%Y-%m-%d') if user.birth_date else ''
+    user_books = request.user.history_books.all()
     context = {
-        'user': user
+        'user': user,
+        'user_books': user_books,
     }
     return render(request, 'profile.html', context)
 

@@ -79,6 +79,14 @@
         <!-- History Books -->
         <div class="col-md-3">
             <!-- Bakal diisi buku-buku yang sudah pernah dibaca -->
+            <h4>History Books</h4>
+            <ul>
+                {% for book in user_books %}
+                    <li>{{ book.title }} by {{ book.author }}</li>
+                {% empty %}
+                    <li>You have not read any books yet</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </body>
