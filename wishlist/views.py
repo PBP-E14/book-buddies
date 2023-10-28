@@ -28,14 +28,14 @@ def show_wishlist(request):
     return render(request, "show_wishlist.html", context)
 
 @csrf_exempt
-def remove_item(request, item_id):
+def remove_wishlist(request, wishlist_id):
     if request.method == 'DELETE':
-        item = Item.objects.get(pk=item_id)
-        item.user = request.user
-        item.delete()
+        wishlist = Wishlist.objects.get(pk=wishlist_id)
+        wishlist.user = request.user
+        wishlist.delete()
         return HttpResponse(b"REMOVED", status=201)
     return HttpResponseNotFound()
 
-def get_item_json(request):
-    product_item = Item.objects.filter(user=request.user)
-    return HttpResponse(serializers.serialize('json', product_item))
+def get_wishlist_json(request):
+    product_wishlist = Wishlist.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', product_wishlist))

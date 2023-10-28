@@ -37,55 +37,46 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js">
-        async function getItems() {
-            return fetch("{% url 'wishlist:get_item_json' %}").then((res) => res.json())
+
+        async function getWishlists() {
+            return fetch("{% url 'wishlist:get_wishlist_json' %}").then((res) => res.json())
         }
 
-        async function refreshItems() {
+        async function refreshWishlists() {
             document.getElementById("wishlist").innerHTML = ""
-            const items = await getItems()
+            const wishlists = await getWishlists()
             let htmlString = `
-            <tr style="text-align: center;">
-                <th style="width: 125px;">Name</th>
-                <th>Amount</th>
-                <th>Description</th>
-                <th style="width: 125px;">Date Added</th>
-                <th>Actions</th>
-            </tr>
             `
-            items.forEach((item) => {
+            wishlists.forEach((wishlist) => {
                 htmlString += `
-                <tr>
-                    <td>${item.fields.name}</td>
-                    <td>${item.fields.amount}</td>
-                    <td style="text-align: justify;">${item.fields.description}</td>
-                    <td>${item.fields.date_added}</td>
-                    <td>
-                        <div class="btn-display">
+                <div class="col-md-4 mb-4">
+                    <div class="card {% if wish.is_achieved %}light-green{% else %}light-red{% endif %}">
+                        <img src="{{ wish.image.url }}" class="card-img-top" alt="{{ wish.wishtitle }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ wish.wishtitle }}</h5>
+                            <p class="card-text">{{ wish.wish }}</p>
+                            <a href="{{ wish.link }}" class="btn btn-primary" target="_blank">Check Detail</a>
                             <a>
-                                <button type="submit" class="btn btn-outline-warning btn-sm edit-item-btn" onclick="addAmount(${item.pk})">+</button>
-                            </a>
-                            <a>
-                                <button type="submit" class="btn btn-outline-warning btn-sm edit-item-btn" onclick="reduceAmount(${item.pk})">-</button>
-                            </a>
-                            <a>
-                                <button type="submit" class="btn btn-outline-danger btn-sm edit-item-btn" onclick="removeItem(${item.pk})">Remove</button>
+                                <button type="submit" class="btn btn-outline-danger btn-sm edit-item-btn" onclick="removeWishlist(${wishlist.pk})">Remove</button>
                             </a>
                         </div>
-                    </item></td>
-                </tr>
+                        <div class="card-footer text-muted">
+                            Created: {{ wish.date }}
+                        </div>
+                    </div>
+                </div>
             `
             })
 
-            document.getElementById("item_table").innerHTML = htmlString
+            document.getElementById("wishlist").innerHTML = htmlString
         }
 
-        refreshItems()
+        refreshWishlists()
 
-        function removeItem(item_id) {
-            fetch(`remove_item/${item_id}/`, {
+        function removeWishlist(wishlist_id) {
+            fetch(`remove_wishlist/${wishlist_id}/`, {
                 method: "DELETE",
-            }).then(refreshItems)
+            }).then(refreshWishlists)
             return false
         }
     </script>
