@@ -38,7 +38,7 @@ def create_ajax(request, book_id):
         except Book.DoesNotExist:
             return JsonResponse({'error': 'Book not found'}, status=404)
 
-        wishlist_item = WishlistItem(user=request.user,book=book)
+        wishlist_item = Wishlist(user=request.user,book=book)
         wishlist_item.save()
 
         return JsonResponse({'message': 'Book added to the wishlist'})
