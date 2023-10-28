@@ -9,4 +9,3 @@ class Book(models.Model):
     publisher = models.CharField(max_length=255)
     year_publication = models.IntegerField()
     image_cover = models.CharField(max_length=2000)
-    has_read = models.BooleanField(default=False)

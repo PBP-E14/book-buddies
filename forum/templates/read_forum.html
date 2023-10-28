@@ -3,27 +3,6 @@
 {% block content %}
 <header>
     <style>
-        nav {
-            background-color: lightblue;
-        }
-
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .wrapper {
-            flex: 1; /* Allows the content to expand and fill the available space. */
-        }
-
-        footer {
-            width: 100%;
-            display: block;
-            clear: both;
-            background: #3E4C5E;
-        }
-
         .content {
             background-color:#FFFFFF; 
             color:black; 
@@ -42,6 +21,7 @@
 
         table {
             border-collapse: collapse;
+            width: 100%;
         }
 
         td {
@@ -53,46 +33,17 @@
             margin-block-start: 15px;
         }
     </style>
-
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Book Buddies</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Welcome, {{ user.username }}!</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'show_forums' %}">Forum Discussion</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_profile' %}">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_login' %}">Login</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-            <div class="add-forum-btn">
-                <a href="{% url 'show_forums' %}">
-                    <button type="button" class="btn btn-warning">Back</button>
-                </a>
-            </div>
-        </div>
-    </nav>
 </header>
 
 <body>
     <div class="content wrapper">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url 'back_to_homepage' %}">Home</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'show_forums' %}">Forum List</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Forum</li>
+            </ol>
+        </nav>
         <table>
             <tr>
                 <td>
@@ -101,8 +52,10 @@
                 </td>
                 <td>
                     <div class="text-end">
-                        <a href="{% url 'reply_forum' forum.pk %}">
-                            <button type="button" class="btn btn-info btn-lg" style="margin-block-start: 15px;">Reply</button>
+                        <a>
+                            <button type="button" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-block-start: 15px;">
+                                Reply
+                            </button>
                         </a>
                     </div>
                 </td>
@@ -114,48 +67,116 @@
                 </td>
             </tr>
         </table>
+        <div id="reply_list"></div>
+    </div>
 
-        <div class="replies">
-            {% if replies|length > 0 %}
-                <h4>{{ reply_count }} Reply</h4>
-                {% for reply in replies %}
-                    {% if reply.user == user %}
-                        <div style="padding-left: 50%;">
-                            <div class="card text-bg-primary mb-3" style="max-width: 50rem;">
-                                <div class="card-header">Replied by: {{ reply.user.username }}</div>
-                                <div class="card-body">
-                                <p class="card-text">{{ reply.content }}</p>
-                                <p class="card-text" style="text-align: end;">Replied on: {{ reply.created_at }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="card text-bg-secondary mb-3" style="max-width: 50rem;">
-                            <div class="card-header">Replied by: {{ reply.user.username }}</div>
-                            <div class="card-body">
-                            <p class="card-text">{{ reply.content }}</p>
-                            <p class="card-text" style="text-align: end;">Replied on: {{ reply.created_at }}</p>
-                            </div>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                <div class="text-center">
-                    <h5>Belum ada balasan untuk forum ini.</h5>
-                    <a href="{% url 'reply_forum' forum.pk %}">
-                        <button type="button" class="btn btn-info btn-lg">Reply</button>
-                    </a>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: lightblue;">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Reply</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="button_close"></button>
                 </div>
-            {% endif %}
+                <div class="modal-body">
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="description" class="col-form-label">Reply:</label>
+                            <textarea class="form-control form-color" id="content" name="content" style="height: 300px;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="button_close" data-bs-dismiss="modal" id="button_close">Close</button>
+                    <button type="button" class="btn btn-success" id="button_add" data-bs-dismiss="modal">Reply</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 
-<footer style="width: 100%; clear: both;">
-    <div class="container-fluid text-white py-3">
-        <div class="container text-center">
-            <p>&copy; 2023 Book Buddies. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+<script>
+    async function getReplies() {
+        return fetch("{% url 'get_reply_json' forum.pk %}").then((res) => res.json())
+    }
+
+    async function getUsers() {
+        return fetch("{% url 'get_user_json' %}").then((res) => res.json())
+    }
+
+    async function refreshReplies() {
+        document.getElementById("reply_list").innerHTML = ""
+        const replies = await getReplies()
+        const users = await getUsers()
+        const currentUser = `{{ user.pk }}`
+        let htmlString = ``
+        if(replies.length > 0) {
+            htmlString += `
+                <h4>${replies.length} Reply</h4>
+                
+            `
+            replies.forEach((reply) => {
+                var replyUser = `${reply.fields.user}`
+                var username = ``
+                users.forEach((thisUser) => {
+                    if (thisUser.pk == replyUser) {
+                        username += `${thisUser.fields.username}`
+                    }
+                })
+                if (currentUser == replyUser) {
+                    htmlString += `
+                        <div style="float: right; width: 60%">
+                            <div class="card text-bg-primary mb-3" style="width: 100%;">
+                                <div class="card-header">Replied by: ${username} </div>
+                                <div class="card-body">
+                                <p class="card-text">${reply.fields.content}</p>
+                                <p class="card-text" style="text-align: end;">Replied on: ${reply.fields.created_at}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `
+                } else {
+                    htmlString += `
+                        <div class="card text-bg-secondary mb-3" style="max-width: 60%;">
+                            <div class="card-header">Replied by: ${username}</div>
+                            <div class="card-body">
+                            <p class="card-text">${reply.fields.content}</p>
+                            <p class="card-text" style="text-align: end;">Replied on: ${reply.fields.created_at}</p>
+                            </div>
+                        </div>
+                    `
+                }
+            })
+        } else {
+            htmlString += `
+                <div class="text-center" style="margin-block-start: 15px;">
+                    <h5>Belum ada balasan untuk forum ini.</h5>
+                </div>
+            `
+        }
+
+        document.getElementById("reply_list").innerHTML = htmlString
+    }
+
+    refreshReplies()
+
+    function addReply() {
+        var id_forum = `{{ forum.pk }}`
+        fetch(`/forum/add_reply_ajax/${id_forum}/`, {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshReplies)
+
+        document.getElementById("form").reset()
+        return false
+    }
+
+    function closeModal() {
+        document.getElementById("form").reset()
+        return false
+    }
+
+    document.getElementById("button_add").onclick = addReply
+    document.getElementById("button_close").onclick = closeModal
+</script>
 {% endblock %}

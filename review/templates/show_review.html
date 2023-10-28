@@ -1,18 +1,102 @@
 {% extends 'base.html' %} 
 
 {% block content %}
-<h1>Book Review</h1>
-{% for review in reviews %}
+<head>
+    <style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    .container {
+        flex: 1;
+    }
+    
+    footer {
+        width: 100%;
+        background: #3E4C5E;
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+    }
 
-<div class = "container">
-    <div class = "row g-3">
-        <div class = "col-12 col-md-6 col-lg-4">
-            <div class="card">
-                <h5 class="card-title">{{ review.title }}</h5>
-                <p class="card-text">{{ review.content }}</p>
-            </div>
+    nav {
+        width: 100%;
+        background: #00c4ff;
+    }   
+
+    nav #brand {
+        padding-left: 10px;
+    }
+
+    </style>
+
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a id = "brand" class="navbar-brand" href="#">Book Buddies</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="#">Welcome, {{ user.username }}!</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'show_forums' %}">Forum Discussion</a>
+            </li>
+            <li class="nav-item">
+                <a id="selected" class="nav-link" href="{% url 'show_review' %}">Book Review</a>
+            </li>
+                <a class="nav-link" href="{% url 'user_profile' %}"><i class="bi bi-person"> Profile</i></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'user_login' %}">Login</a>
+            </li>
+            {% endif %}
+        </ul>
+        </div>
+    </nav>
+</head>
+<body>
+    <h1>Book Review</h1>
+    <div class = "container">
+        <div class = "row g-3">
+            {% if reviews|length > 0 %}
+                {% for review in reviews %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card">
+                        <h5 class="card-title">{{ review.title }}</h5>
+                        <p class="card-text">{{ review.review }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                <a href="{% url 'create_review' %}">
+                    <button type="button" class="btn btn-primary btn-lg">Add review</button>
+                </a>
+            {% else %}
+                <div class="text-center">
+                    <h3>No book has been reviewed yet</h3>
+                    <a href="{% url 'create_review' %}">
+                        <button type="button" class="btn btn-primary btn-lg">Add review</button>
+                    </a>
+                </div>
+            {% endif %}
         </div>
     </div>
-</div>
-{% endfor %}
+</body>
+
+<footer style="width: 100%; clear: both;">
+    <div class="container-fluid text-white py-3">
+        <div class="container text-center">
+            <p>&copy; 2023 Book Buddies. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
 {% endblock %}
