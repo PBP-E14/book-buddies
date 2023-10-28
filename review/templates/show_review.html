@@ -30,12 +30,52 @@
         margin-left: 2.5%;
         padding: 2.5%;
     }
+    
+    #ajaxbutton {
+        transition: .2s all;
+    }
+
+    #ajaxbutton:hover {
+        font-weight: bold;
+        border-radius: 5px;
+    }
     </style>
 </head>
 <body>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Book Review</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="col-form-label">Title:</label>
+                            <input type="title" class="form-control" id="title" name="title"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="review" class="col-form-label">Review:</label>
+                            <textarea class="form-control" id="review" name="review"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h1 class ="text-center">Book Review</h1>
+    <div class = "text-center mb-2">
+        <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+    </div>
     <div class = "container">
-        <div class = "row g-3">
+        <div class="row g-3">
             {% if reviews|length > 0 %}
                 {% for review in reviews %}
                 <div class="col-12 col-md-6 col-lg-4 mx-auto">
@@ -46,25 +86,67 @@
                     </div>
                 </div>
                 {% endfor %}
+            {% else %}
+            <div class="text-center">
+                <h3>No book has been reviewed yet</h3>
                 <a href="{% url 'create_review' %}">
                     <button type="button" class="btn btn-primary btn-lg">Add review</button>
                 </a>
-            {% else %}
-                <div class="text-center">
-                    <h3>No book has been reviewed yet</h3>
-                    <a href="{% url 'create_review' %}">
-                        <button type="button" class="btn btn-primary btn-lg">Add review</button>
-                    </a>
-                </div>
+            </div>
             {% endif %}
         </div>
     </div>
 </body>
 
 <script>
+    // fungsi refresh masih belum bisa
     async function getReviews() {
-        return fetch("{% url 'get_review_json' %}").then((res) => res.json())
+        return fetch("{% url 'get_review_json' %}").then((res) => res.json());
     }
+
+    async function refreshReviews() {
+        const reviewsContainer = document.getElementById("review_list");
+        reviewsContainer.innerHTML = ''; // Mengosongkan konten sebelum menambahkan yang baru
+
+        const reviews = await getReviews();
+
+        reviews.forEach((review) => {
+            const cardDiv = document.createElement("div");
+            cardDiv.className = "card text-center";
+
+            const cardTitle = document.createElement("h5");
+            cardTitle.className = "card-title";
+            cardTitle.textContent = review.fields.title;
+
+            const cardSubtitle = document.createElement("h6");
+            cardSubtitle.className = "card-subtitle mb-2 text-muted";
+            cardSubtitle.textContent = `${review.fields.date}, created by ${review.fields.user}`;
+
+            const cardText = document.createElement("p");
+            cardText.className = "card-text";
+            cardText.textContent = review.fields.review;
+
+            // Menyusun elemen-elemen HTML
+            cardDiv.appendChild(cardTitle);
+            cardDiv.appendChild(cardSubtitle);
+            cardDiv.appendChild(cardText);
+            reviewsContainer.appendChild(cardDiv);
+        });
+    }
+
+    refreshReviews(); 
+
+    function addReview() {
+        fetch("{% url 'add_review_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        })
+        document.getElementById("form").reset()
+        return false
+    }
+    document.getElementById("button_add").onclick = addReview
+    
 </script>
+
 
 {% endblock %}
