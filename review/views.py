@@ -1,8 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from review.forms import ReviewForm
 from django.urls import reverse
 from review.models import Review
+from django.core import serializers
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 # Create your views here.
 def show_review(request):
@@ -23,3 +26,4 @@ def create_review(request):
 
     context = {'form': form}
     return render(request, "create_review.html", context)
+
