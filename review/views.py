@@ -8,7 +8,7 @@ from review.models import Review
 def show_review(request):
     reviews = Review.objects.all()
     context = {
-        'reviews' : reviews
+        'reviews' : reviews,
     }
     return render(request, "show_review.html", context)
 
@@ -16,9 +16,10 @@ def create_review(request):
     form = ReviewForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST":
-        form.save()
-        return HttpResponseRedirect(reverse('main:show_review.html'))
+        review = form.save(commit=False)
+        review.user = request.user
+        review.save()
+        return HttpResponseRedirect(reverse('show_review'))
 
     context = {'form': form}
-    return render(request, "create_product.html", context)
-
+    return render(request, "create_review.html", context)
