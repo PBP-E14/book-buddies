@@ -6,7 +6,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("book", "0002_auto_20231027_1327"),
+        ("book", "0002_auto_20231028_1043"),
         ("review", "0001_initial"),
     ]
 
