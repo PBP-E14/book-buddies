@@ -6,8 +6,10 @@ from wishlist.models import Wishlist  # Import your Product model
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from book.models import Book
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required(login_url='')
 def show_wishlist(request):
     wishlists = Wishlist.objects.filter(user=request.user)
 
