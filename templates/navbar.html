@@ -10,6 +10,9 @@
             <a class="nav-link" style="color: black;">Welcome, {{ user.username }}!</a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="{% url 'book:show_books' %}">Book Catalog</a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="{% url 'wishlist:show_wishlist' %}">My Wishlist</a>
         </li>
         <li class="nav-item">
