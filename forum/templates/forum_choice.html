@@ -5,23 +5,6 @@
 <html>
     <header>
         <style>
-            body {
-                display: flex;
-                flex-direction: column;
-                min-height: 100vh;
-            }
-    
-            .wrapper {
-                flex: 1; /* Allows the content to expand and fill the available space. */
-            }
-    
-            footer {
-                width: 100%;
-                display: block;
-                clear: both;
-                background: #3E4C5E;
-            }
-    
             .content {
                 background-color:#FFFFFF; 
                 color:black; 
@@ -66,37 +49,6 @@
                 align-items: center;
             }
         </style>
-    
-        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: lightblue;">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Book Buddies</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                    </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ml-auto">
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Welcome, {{ user.username }}!</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'show_forums' %}">Forum Discussion</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_profile' %}">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                        </li>
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_login' %}">Login</a>
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </nav>
     </header>
     <body>
         <div class="content wrapper">
@@ -106,23 +58,7 @@
                   <li class="breadcrumb-item active" aria-current="page">Forum List</li>
                 </ol>
             </nav>
-            {% if forums|length > 0 %}
-                <h3>Forum Diskusi</h3>
-                <table id="forum_table"></table>
-                <div class="text-center">
-                    <button type="button" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-block-start: 15px;">
-                        Tambah Forum
-                    </button>
-                </div>
-                
-            {% else %}
-                <div class="text-center">
-                    <h3>Belum ada forum yang di post.</h3>
-                    <button type="button" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-block-start: 15px;">
-                        Tambah Forum
-                    </button>
-                </div>
-            {% endif %}
+            <div id="forum_table"></div>
         </div>
 
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -146,21 +82,13 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="button_close" data-bs-dismiss="modal" id="button_close">Close</button>
+                        <button type="button" class="btn btn-secondary" id="button_close" data-bs-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-success" id="button_add" data-bs-dismiss="modal">Add Forum</button>
                     </div>
                 </div>
             </div>
         </div>
     </body>
-    
-    <footer style="width: 100%; clear: both;">
-        <div class="container-fluid text-white py-3">
-            <div class="container text-center">
-                <p>&copy; 2023 Book Buddies. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
 </html>
 
 <script>
@@ -168,39 +96,72 @@
         return fetch("{% url 'get_forum_json' %}").then((res) => res.json())
     }
 
+    async function getUsers() {
+        return fetch("{% url 'get_user_json' %}").then((res) => res.json())
+    }
+
     async function refreshForums() {
         document.getElementById("forum_table").innerHTML = ""
         const forums = await getForums()
+        const users = await getUsers()
         let htmlString = ``
-        forums.forEach((forum) => {
-            var forumUser = `${forum.fields.user}`
+        if (forums.length > 0) {
             htmlString += `
-            <tr class="table-row-button" onclick ="window.location='read_forum/${forum.pk}/';">
-                <td id="reply-info">
-                    <p>Reply 
-                    <br>${forum.fields.reply_count}
-                    </p>
-                </td>
-                <td>
-                    <h5>${forum.fields.title}</h5>
-                    <h6>Posted by: ${forumUser.username}</h6>
+                <h3>Forum Discussion</h3>
+                <table>
             `
-            if (forum.fields.content.length > 300) {
-                var slicedContent = `${forum.fields.content}`.slice(0,300)
+            forums.forEach((forum) => {
+                var forumUser = `${forum.fields.user}`
+                var username = ``
+                users.forEach((thisUser) => {
+                    if (thisUser.pk == forumUser) {
+                        username += `${thisUser.fields.username}`
+                    }
+                })
                 htmlString += `
-                    <p>${slicedContent}...</p>
+                <tr class="table-row-button" onclick ="window.location='read_forum/${forum.pk}/';">
+                    <td id="reply-info">
+                        <p>Reply 
+                        <br>${forum.fields.total_reply}
+                        </p>
+                    </td>
+                    <td>
+                        <h5>${forum.fields.title}</h5>
+                        <h6>Posted by ${username} on ${forum.fields.created_at}</h6>
                 `
-            } else {
+                if (forum.fields.content.length > 300) {
+                    var slicedContent = `${forum.fields.content}`.slice(0,300)
+                    htmlString += `
+                        <p>${slicedContent}...</p>
+                    `
+                } else {
+                    htmlString += `
+                        <p>${forum.fields.content}</p>
+                    `
+                }
                 htmlString += `
-                    <p>${forum.fields.content}</p>
+                    </td>
+                </tr>
                 `
-            }
+            })
             htmlString += `
-                    <p id="date">Posted on: ${forum.fields.created_at}</p>
-                </td>
-            </tr>
-        `
-        })
+                </table>
+                <div class="text-center">
+                    <button type="button" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-block-start: 15px;">
+                        Add Forum
+                    </button>
+                </div>
+            `
+        } else {
+            htmlString += `
+                <div class="text-center">
+                    <h3>Belum ada forum yang di post.</h3>
+                    <button type="button" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-block-start: 15px;">
+                        Tambah Forum
+                    </button>
+                </div>
+            `
+        }
 
         document.getElementById("forum_table").innerHTML = htmlString
     }

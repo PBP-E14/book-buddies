@@ -31,7 +31,7 @@ def back_to_homepage(request):
     return render(request, "homepage.html")
 
 def get_forum_json(request):
-    forums = Forum.objects.annotate(reply_count=Count('reply'))
+    forums = Forum.objects.all()
     return HttpResponse(serializers.serialize('json', forums))
 
 @csrf_exempt
@@ -42,6 +42,7 @@ def add_forum_ajax(request):
 
         new_forum = Forum(title=title, content=content)
         new_forum.user = request.user
+        new_forum.total_reply = 0
         new_forum.save()
         return HttpResponse(b"CREATED", status=201)
 
@@ -60,6 +61,13 @@ def add_reply_ajax(request, id):
         new_reply.forum_id = Forum.objects.get(pk=id)
         new_reply.user = request.user
         new_reply.save()
+        edited_forum = Forum.objects.get(pk=id)
+        edited_forum.total_reply += 1
+        edited_forum.save()
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
+
+def get_user_json(request):
+    users = User.objects.all()
+    return HttpResponse(serializers.serialize('json', users))

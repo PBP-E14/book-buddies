@@ -3,23 +3,6 @@
 {% block content %}
 <header>
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .wrapper {
-            flex: 1; /* Allows the content to expand and fill the available space. */
-        }
-
-        footer {
-            width: 100%;
-            display: block;
-            clear: both;
-            background: #3E4C5E;
-        }
-
         .content {
             background-color:#FFFFFF; 
             color:black; 
@@ -50,37 +33,6 @@
             margin-block-start: 15px;
         }
     </style>
-
-    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: lightblue;">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Book Buddies</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-                </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Welcome, {{ user.username }}!</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'show_forums' %}">Forum Discussion</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_profile' %}">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_login' %}">Login</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
 </header>
 
 <body>
@@ -136,29 +88,26 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" id="button_close" data-bs-dismiss="modal" id="button_close">Close</button>
-                    <button type="button" class="btn btn-success" id="button_add" data-bs-dismiss="modal">Reply Forum</button>
+                    <button type="button" class="btn btn-success" id="button_add" data-bs-dismiss="modal">Reply</button>
                 </div>
             </div>
         </div>
     </div>
 </body>
 
-<footer style="width: 100%; clear: both;">
-    <div class="container-fluid text-white py-3">
-        <div class="container text-center">
-            <p>&copy; 2023 Book Buddies. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
-
 <script>
     async function getReplies() {
         return fetch("{% url 'get_reply_json' forum.pk %}").then((res) => res.json())
     }
 
+    async function getUsers() {
+        return fetch("{% url 'get_user_json' %}").then((res) => res.json())
+    }
+
     async function refreshReplies() {
         document.getElementById("reply_list").innerHTML = ""
         const replies = await getReplies()
+        const users = await getUsers()
         const currentUser = `{{ user.pk }}`
         let htmlString = ``
         if(replies.length > 0) {
@@ -168,11 +117,17 @@
             `
             replies.forEach((reply) => {
                 var replyUser = `${reply.fields.user}`
+                var username = ``
+                users.forEach((thisUser) => {
+                    if (thisUser.pk == replyUser) {
+                        username += `${thisUser.fields.username}`
+                    }
+                })
                 if (currentUser == replyUser) {
                     htmlString += `
                         <div style="float: right; width: 60%">
                             <div class="card text-bg-primary mb-3" style="width: 100%;">
-                                <div class="card-header">Replied by: ${replyUser.username} </div>
+                                <div class="card-header">Replied by: ${username} </div>
                                 <div class="card-body">
                                 <p class="card-text">${reply.fields.content}</p>
                                 <p class="card-text" style="text-align: end;">Replied on: ${reply.fields.created_at}</p>
@@ -183,7 +138,7 @@
                 } else {
                     htmlString += `
                         <div class="card text-bg-secondary mb-3" style="max-width: 60%;">
-                            <div class="card-header">Replied by: ${replyUser.username}</div>
+                            <div class="card-header">Replied by: ${username}</div>
                             <div class="card-body">
                             <p class="card-text">${reply.fields.content}</p>
                             <p class="card-text" style="text-align: end;">Replied on: ${reply.fields.created_at}</p>
@@ -194,7 +149,7 @@
             })
         } else {
             htmlString += `
-                <div class="text-center">
+                <div class="text-center" style="margin-block-start: 15px;">
                     <h5>Belum ada balasan untuk forum ini.</h5>
                 </div>
             `
