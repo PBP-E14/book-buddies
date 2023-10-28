@@ -1,21 +1,11 @@
-import datetime
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from django.shortcuts import redirect
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages  
-from django.contrib.auth import authenticate, login
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
-from django.urls import reverse
 from django.http import HttpResponse
 from django.core import serializers
 from wishlist.models import Wishlist  # Import your Product model
-from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from book.models import Book
 
 # Create your views here.
 def show_wishlist(request):
@@ -36,6 +26,21 @@ def remove_wishlist(request, wishlist_id):
         return HttpResponse(b"REMOVED", status=201)
     return HttpResponseNotFound()
 
-def get_wishlist_json(request):
+def get_wishlist(request):
     product_wishlist = Wishlist.objects.filter(user=request.user)
     return HttpResponse(serializers.serialize('json', product_wishlist))
+
+@csrf_exempt
+def create_ajax(request, book_id):
+    if request.method == 'POST':
+        try:
+            book = Book.objects.get(pk=book_id)
+        except Book.DoesNotExist:
+            return JsonResponse({'error': 'Book not found'}, status=404)
+
+        wishlist_item = WishlistItem(user=request.user,book=book)
+        wishlist_item.save()
+
+        return JsonResponse({'message': 'Book added to the wishlist'})
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
