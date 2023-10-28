@@ -6,3 +6,4 @@ class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     review = models.TextField()
+    date = models.DateField(auto_now_add=True)
