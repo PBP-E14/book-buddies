@@ -10,6 +10,20 @@
             padding-block: 20px;
         }
 
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .left {
+            order: 1; /* Reverses the order to put it on the left */
+        }
+
+        .right {
+            order: 2;
+        }
+
         h6 {
             color: gray;
         }
@@ -32,6 +46,10 @@
         .replies {
             margin-block-start: 15px;
         }
+
+        .display-content {
+            display: flex;
+        }
     </style>
 </header>
 
@@ -47,7 +65,11 @@
         <table>
             <tr>
                 <td>
-                    <h2>{{ forum.title }}</h2>
+                    {% if user.is_staff %}
+                        <h2>{{ forum.title }} <button type="button" class="btn btn-outline-danger" onclick="removeForum(`{{ forum.pk }}`)">Delete</button></h2>
+                    {% else %}
+                        <h2>{{ forum.title }}</h2>
+                    {% endif %}
                     <h6>Posted by: {{ forum.user.username }}</h6>
                 </td>
                 <td>
@@ -127,7 +149,12 @@
                     htmlString += `
                         <div style="float: right; width: 60%">
                             <div class="card text-bg-primary mb-3" style="width: 100%;">
-                                <div class="card-header">Replied by: ${username} </div>
+                                <div class="card-header container">
+                                    <div class="left">Replied by: ${username}</div>
+                                    <div class="right">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeReply(${reply.pk})">Delete</button>
+                                    </div>
+                                </div>
                                 <div class="card-body">
                                 <p class="card-text">${reply.fields.content}</p>
                                 <p class="card-text" style="text-align: end;">Replied on: ${reply.fields.created_at}</p>
@@ -138,7 +165,16 @@
                 } else {
                     htmlString += `
                         <div class="card text-bg-secondary mb-3" style="max-width: 60%;">
-                            <div class="card-header">Replied by: ${username}</div>
+                            {% if user.is_staff %}
+                                <div class="card-header container">
+                                    <div class="left">Replied by: ${username}</div>
+                                    <div class="right">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeReply(${reply.pk})">Delete</button>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="card-header">Replied by: ${username}</div>
+                            {% endif %}
                             <div class="card-body">
                             <p class="card-text">${reply.fields.content}</p>
                             <p class="card-text" style="text-align: end;">Replied on: ${reply.fields.created_at}</p>
@@ -160,6 +196,13 @@
 
     refreshReplies()
 
+    function removeForum(forum_id) {
+        fetch(`/forum/remove_forum_button/${forum_id}/`, {
+            method: "DELETE",
+        }).then(window.location = "{% url 'show_forums' %}")
+        return false
+    }
+
     function addReply() {
         var id_forum = `{{ forum.pk }}`
         fetch(`/forum/add_reply_ajax/${id_forum}/`, {
@@ -168,6 +211,13 @@
         }).then(refreshReplies)
 
         document.getElementById("form").reset()
+        return false
+    }
+
+    function removeReply(forum_id) {
+        fetch(`/forum/remove_reply_button/${forum_id}/`, {
+            method: "DELETE",
+        }).then(refreshReplies)
         return false
     }
 
