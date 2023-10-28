@@ -6,6 +6,7 @@ class Forum(models.Model):
     content = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
+    total_reply = models.IntegerField()
 
 class Reply(models.Model):
     content = models.TextField()
