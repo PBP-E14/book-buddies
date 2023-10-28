@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 
 # Create your models here.
 
@@ -9,4 +10,8 @@ class Book(models.Model):
     publisher = models.CharField(max_length=255)
     year_publication = models.IntegerField()
     image_cover = models.CharField(max_length=2000)
-    has_read = models.BooleanField(default=False)
+
+
+class HasReadBook(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
