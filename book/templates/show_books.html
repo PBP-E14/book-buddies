@@ -1,20 +1,66 @@
 {% extends "base.html" %} {% block content %}
 
 <p>button wishlist, already read book</p>
+<p>view : has_read_bok, request nambah buku (user), acc req buku (admin)</p>
 <div
     id="book-content"
     class="d-flex flex-wrap justify-content-center gap-5"
 ></div>
 
 <script>
+    async function addWishlist(id) {
+        await fetch(`/wishlist/create-ajax/${id}/`, {
+            method: "POST",
+        }).then(refreshBooks());
+    }
+
+    async function removeWishlist(id) {
+        await fetch(`/wishlist/remove_wishlist/${id}/`, {
+            method: "DELETE",
+        }).then(refreshBooks());
+    }
+
+    async function readBook(id) {
+        await fetch(`/book/read-book/${id}`).then(refreshBooks());
+    }
+
     async function getBooks() {
         return fetch("{% url 'book:get_book' %}").then((res) => res.json());
+    }
+
+    async function getReadBook() {
+        const result = await fetch("{% url 'book:get_read_book' %}").then(
+            (res) => res.json()
+        );
+
+        const readBooksPk = [];
+        for (const item of result) {
+            readBooksPk.push(item.pk);
+        }
+
+        return readBooksPk;
+    }
+
+    async function getWishlist() {
+        const result = await fetch("{% url 'wishlist:get_wishlist' %}").then(
+            (res) => res.json()
+        );
+
+        const wishlist = { arrayPk: [] };
+        for (const item of result) {
+            wishlist["arrayPk"].push(item.fields.book);
+            wishlist[item.fields.book] = item.pk;
+        }
+
+        return wishlist;
     }
 
     async function refreshBooks() {
         document.getElementById("book-content").innerHTML = "";
         htmlString = "";
         const books = await getBooks();
+        const readBooks = await getReadBook();
+        const wishlist = await getWishlist();
         books.forEach((book) => {
             htmlString += `
             <div class="card" style="width: 18rem">
@@ -29,11 +75,29 @@
                         <h5 class="card-title">${book.fields.title}</h5>
                         <div class="card-text">
                             <p class="m-0">by: ${book.fields.author}</p>
-                            <p class="m-0">publisher: ${book.fields.publisher}</p>
-                            <p class="m-0">year: ${book.fields.year_publication}</p>
+                            <p class="m-0">publisher: ${
+                                book.fields.publisher
+                            }</p>
+                            <p class="m-0">year: ${
+                                book.fields.year_publication
+                            }</p>
                             </div>
                     </div>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <div class="d-flex flex-column gap-2">
+                        ${
+                            wishlist["arrayPk"].includes(book.pk)
+                                ? `<button onClick={removeWishlist(${
+                                      wishlist[book.pk]
+                                  })} class="btn btn-danger w-100">Remove From Wishlist</button>`
+                                : `<button onClick={addWishlist(${book.pk})} class="btn btn-warning w-100">Add To Wishlist</button>`
+                        }
+                        
+                        ${
+                            readBooks.includes(book.pk)
+                                ? `<button class="btn btn-secondary w-100">Already Read</button>`
+                                : `<button onClick={readBook(${book.pk})} class="btn btn-success w-100">Read Book</button>`
+                        }
+                    </div>
                 </div>
             </div>
             `;
