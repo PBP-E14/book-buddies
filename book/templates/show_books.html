@@ -8,6 +8,18 @@
 ></div>
 
 <script>
+    async function addWishlist(id) {
+        await fetch(`/wishlist/create-ajax/${id}/`, {
+            method: "POST",
+        });
+        refreshBooks();
+    }
+
+    async function removeWishlist(id) {
+        await fetch(`/wishlist/remove_wishlist/${id}/`, { method: "DELETE" });
+        refreshBooks();
+    }
+
     async function readBook(id) {
         await fetch(`/book/read-book/${id}`);
         refreshBooks();
@@ -30,11 +42,26 @@
         return readBooksPk;
     }
 
+    async function getWishlist() {
+        const result = await fetch("{% url 'wishlist:get_wishlist' %}").then(
+            (res) => res.json()
+        );
+
+        const wishlist = { arrayPk: [] };
+        for (const item of result) {
+            wishlist["arrayPk"].push(item.fields.book);
+            wishlist[item.fields.book] = item.pk;
+        }
+
+        return wishlist;
+    }
+
     async function refreshBooks() {
         document.getElementById("book-content").innerHTML = "";
         htmlString = "";
         const books = await getBooks();
         const readBooks = await getReadBook();
+        const wishlist = await getWishlist();
         books.forEach((book) => {
             htmlString += `
             <div class="card" style="width: 18rem">
@@ -58,7 +85,14 @@
                             </div>
                     </div>
                     <div class="d-flex flex-column gap-2">
-                        <a href="#" class="btn btn-warning w-100">Add To Wishlist</a>
+                        ${
+                            wishlist["arrayPk"].includes(book.pk)
+                                ? `<button onClick={removeWishlist(${
+                                      wishlist[book.pk]
+                                  })} class="btn btn-danger w-100">Remove From Wishlist</button>`
+                                : `<button onClick={addWishlist(${book.pk})} class="btn btn-warning w-100">Add To Wishlist</button>`
+                        }
+                        
                         ${
                             readBooks.includes(book.pk)
                                 ? `<button class="btn btn-secondary w-100">Already Read</button>`
