@@ -11,18 +11,17 @@
     async function addWishlist(id) {
         await fetch(`/wishlist/create-ajax/${id}/`, {
             method: "POST",
-        });
-        refreshBooks();
+        }).then(refreshBooks());
     }
 
     async function removeWishlist(id) {
-        await fetch(`/wishlist/remove_wishlist/${id}/`, { method: "DELETE" });
-        refreshBooks();
+        await fetch(`/wishlist/remove_wishlist/${id}/`, {
+            method: "DELETE",
+        }).then(refreshBooks());
     }
 
     async function readBook(id) {
-        await fetch(`/book/read-book/${id}`);
-        refreshBooks();
+        await fetch(`/book/read-book/${id}`).then(refreshBooks());
     }
 
     async function getBooks() {
