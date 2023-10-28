@@ -6,31 +6,31 @@ import datetime
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('book', '0002_auto_20231027_1327'),
-        ('wishlist', '0002_remove_wishlist_date_added_bookwishlist'),
+        ("wishlist", "0002_remove_wishlist_date_added_bookwishlist"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='wishlist',
-            old_name='user_id',
-            new_name='user',
+            model_name="wishlist",
+            old_name="user_id",
+            new_name="user",
         ),
         migrations.AddField(
-            model_name='wishlist',
-            name='book',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='book.book'),
+            model_name="wishlist",
+            name="book",
+            field=models.ForeignKey(
+                default=1, on_delete=django.db.models.deletion.CASCADE, to="book.book"
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='wishlist',
-            name='date_added',
+            model_name="wishlist",
+            name="date_added",
             field=models.DateField(auto_now_add=True, default=datetime.datetime.now),
             preserve_default=False,
         ),
         migrations.DeleteModel(
-            name='BookWishlist',
+            name="BookWishlist",
         ),
     ]

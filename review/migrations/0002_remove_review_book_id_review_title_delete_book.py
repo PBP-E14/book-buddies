@@ -4,23 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('review', '0001_initial'),
+        ("review", "0002_alter_review_book_id_delete_book"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='review',
-            name='book_id',
+            model_name="review",
+            name="book_id",
         ),
         migrations.AddField(
-            model_name='review',
-            name='title',
+            model_name="review",
+            name="title",
             field=models.CharField(default=1, max_length=255),
             preserve_default=False,
-        ),
-        migrations.DeleteModel(
-            name='Book',
         ),
     ]
