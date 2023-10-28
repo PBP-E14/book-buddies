@@ -10,11 +10,21 @@
                 color:black; 
                 padding-inline: 30px; 
                 padding-block: 20px;
+                width: 100%;
             }
     
             table {
                 border-collapse: collapse;
                 width: 100%;
+                display: flex;
+                flex-direction: column;
+                max-width: 100%;
+                overflow: auto;
+            }
+
+            .outer-td{
+                border-block: 0px;
+                padding: 8px;
             }
 
             .table-row-button {
@@ -48,6 +58,41 @@
             .add-forum-btn {
                 align-items: center;
             }
+
+            .container-out {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .left {
+                width: 20%;
+                order: 1; /* Reverses the order to put it on the left */
+            }
+
+            .right {
+                width: 78%;
+                order: 2;
+            }
+
+            @media screen and (max-width: 810px) {
+                .container-out {
+                    display: flex;
+                    flex-direction: column; /* Stack items vertically */
+                    justify-content: center; /* Align items to the top */
+                    align-items: flex-start;
+                }
+
+                .left {
+                    width: 100%;
+                    order: 1;
+                }
+
+                .right {
+                    width: 100%;
+                    order: 2;
+                }
+            }
         </style>
     </header>
     <body>
@@ -58,7 +103,22 @@
                   <li class="breadcrumb-item active" aria-current="page">Forum List</li>
                 </ol>
             </nav>
-            <div id="forum_table"></div>
+            <div class="container-out">
+                <div class="left">
+                    <h6>Choice of Forum</h6>
+                    <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group" style="width: 100%; padding-block-end: 10px;">
+                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio1" value="1" autocomplete="off" onclick="selectForums(1)" checked>
+                        <label class="btn btn-outline-warning" for="vbtn-radio1">All</label>
+                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio2" value="2" autocomplete="off" onclick="selectForums(2)">
+                        <label class="btn btn-outline-warning" for="vbtn-radio2">No Reply</label>
+                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio3" value="3" autocomplete="off" onclick="selectForums(3)">
+                        <label class="btn btn-outline-warning" for="vbtn-radio3">Replied</label>
+                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio4" value="4" autocomplete="off" onclick="selectForums(4)">
+                        <label class="btn btn-outline-warning" for="vbtn-radio4">Your Forum</label>
+                    </div>
+                </div>
+                <div class="right" id="forum_table"></div>
+            </div>
         </div>
 
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -88,12 +148,14 @@
                 </div>
             </div>
         </div>
+
+        <div id="modal-for-edit"></div>
     </body>
 </html>
 
 <script>
-    async function getForums() {
-        return fetch("{% url 'get_forum_json' %}").then((res) => res.json())
+    async function getForums(choice) {
+        return fetch(`/forum/get_forum_json/${choice}/`).then((res) => res.json())
     }
 
     async function getUsers() {
@@ -102,8 +164,21 @@
 
     async function refreshForums() {
         document.getElementById("forum_table").innerHTML = ""
-        const forums = await getForums()
+
+        var radioButtons = document.getElementsByName("vbtn-radio");
+        // Initialize a variable to store the selected value
+        var selectedValue = "";
+        // Iterate through the radio buttons to find the selected one
+        for (var i = 0; i < radioButtons.length; i++) {
+            if (radioButtons[i].checked) {
+                selectedValue = radioButtons[i].value;
+                break;  // Exit the loop when a selected radio button is found
+            }
+        }
+        const forums = await getForums(selectedValue)
+
         const users = await getUsers()
+        var adminAccess = `{{ user.is_staff }}`
         let htmlString = ``
         if (forums.length > 0) {
             htmlString += `
@@ -119,13 +194,13 @@
                     }
                 })
                 htmlString += `
-                <tr class="table-row-button" onclick ="window.location='read_forum/${forum.pk}/';">
-                    <td id="reply-info">
+                <tr class="table-row-button">
+                    <td id="reply-info" onclick ="window.location='read_forum/${forum.pk}/';" style="width: 5%">
                         <p>Reply 
                         <br>${forum.fields.total_reply}
                         </p>
                     </td>
-                    <td>
+                    <td onclick ="window.location='read_forum/${forum.pk}/';">
                         <h5>${forum.fields.title}</h5>
                         <h6>Posted by ${username} on ${forum.fields.created_at}</h6>
                 `
@@ -139,10 +214,17 @@
                         <p>${forum.fields.content}</p>
                     `
                 }
-                htmlString += `
-                    </td>
-                </tr>
-                `
+                htmlString += `</td>`
+                if (adminAccess == `True`) {
+                    htmlString += `
+                        <td>
+                            <a>
+                                <button type="button" class="btn btn-outline-danger" onclick="removeForum(${forum.pk})">Delete</button>
+                            </a>
+                        </td>
+                    `
+                }
+                htmlString += `</tr>`
             })
             htmlString += `
                 </table>
@@ -180,6 +262,19 @@
 
     function closeModal() {
         document.getElementById("form").reset()
+        return false
+    }
+
+    function removeForum(forum_id) {
+        fetch(`/forum/remove_forum_button/${forum_id}/`, {
+            method: "DELETE",
+        }).then(refreshForums)
+        return false
+    }
+
+    function selectForums(choice){
+        refreshForums()
+        document.getElementById(`vbtn-radio${choice}`).checked = true
         return false
     }
 

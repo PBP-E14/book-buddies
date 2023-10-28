@@ -1,23 +1,15 @@
-import datetime
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from django.shortcuts import redirect
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages  
-from django.contrib.auth import authenticate, login
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
 from django.http import HttpResponseNotFound
-from django.urls import reverse
 from django.http import HttpResponse
 from django.core import serializers
 from wishlist.models import Wishlist  # Import your Product model
-from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from book.models import Book
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required(login_url='')
 def show_wishlist(request):
     wishlists = Wishlist.objects.filter(user=request.user)
 
@@ -28,14 +20,29 @@ def show_wishlist(request):
     return render(request, "show_wishlist.html", context)
 
 @csrf_exempt
-def remove_item(request, item_id):
+def remove_wishlist(request, wishlist_id):
     if request.method == 'DELETE':
-        item = Item.objects.get(pk=item_id)
-        item.user = request.user
-        item.delete()
+        wishlist = Wishlist.objects.get(pk=wishlist_id)
+        wishlist.user = request.user
+        wishlist.delete()
         return HttpResponse(b"REMOVED", status=201)
     return HttpResponseNotFound()
 
-def get_item_json(request):
-    product_item = Item.objects.filter(user=request.user)
-    return HttpResponse(serializers.serialize('json', product_item))
+def get_wishlist(request):
+    product_wishlist = Wishlist.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize('json', product_wishlist))
+
+@csrf_exempt
+def create_ajax(request, book_id):
+    if request.method == 'POST':
+        try:
+            book = Book.objects.get(pk=book_id)
+        except Book.DoesNotExist:
+            return JsonResponse({'error': 'Book not found'}, status=404)
+
+        wishlist_item = Wishlist(user=request.user,book=book)
+        wishlist_item.save()
+
+        return JsonResponse({'message': 'Book added to the wishlist'})
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

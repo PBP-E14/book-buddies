@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from book.models import Book
 from .models import User
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
 
 def register(request):
     if request.method == 'POST':
@@ -61,6 +63,18 @@ def register(request):
 
     return render(request, 'register.html')
 
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('homepage')
+        else:
+            messages.info(request, 'Sorry, incorrect username or password. Please try again.')
+    context = {}
+    return render(request, 'login.html', context)
 
 def user_profile(request):
     user = request.user
