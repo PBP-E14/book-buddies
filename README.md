@@ -59,5 +59,7 @@ Dapat mengakses aplikasi dengan login maupun tidak login. Jika pengunjung login,
 Hanya bisa mengubah katalog buku (create, edit, dan delete).
 
 Untuk akun admin atau superuser dapat menggunakan akun berikut:
+
 username: admin
+
 password: admin
