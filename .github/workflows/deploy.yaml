@@ -1,4 +1,4 @@
-name: Deploy to Vercel Main
+name: Deploy to PythonAnywhere
 
 on:
     push:
@@ -13,10 +13,22 @@ jobs:
             - name: Checkout code
               uses: actions/checkout@v2
 
-            - name: Deploy to Vercel
-              uses: amondnet/vercel-action@v20
+            - name: Set up Python
+              uses: actions/setup-python@v2
               with:
-                  vercel-token: ${{ secrets.VERCEL_TOKEN }}
-                  vercel-org-id: ${{ secrets.VERCEL_ORG_ID}} # Replace with your Vercel team ID
-                  vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-                  vercel-args: "--prod"
+                  python-version: 3.10 # Choose your Python version
+
+            - name: Install dependencies
+              run: pip install -r requirements.txt
+
+            - name: Deploy to PythonAnywhere
+              run: |
+                  # Use PythonAnywhere Web app's API token and URL
+                  PA_TOKEN=${{ secrets.PYTHON_ANYWHERE_TOKEN }}
+                  PA_URL="https://www.pythonanywhere.com"
+
+                  # Deploy your Django app to PythonAnywhere using PA API
+                  pa_autoconfigure.py https://github.com/PBP-E14/book-buddies.git
+
+                  # Reload your web app to apply changes
+                  curl -s -X POST $PA_URL/api/v0/user/irfankamil/webapps/irfankamil.pythonanywhere.com/reload/ -H "Authorization: Token $PA_TOKEN"
