@@ -8,6 +8,7 @@
 
 <div class="container mt-5">
     <h1>Welcome to Book Buddies!</h1>
+    {% if user.is_authenticated %}
     <div class="w-100 d-flex flex-wrap justify-content-center gap-4 py-4">
         <div class="card" style="max-width: 500px">
             <div
@@ -68,5 +69,11 @@
             </div>
         </div>
     </div>
+    {% else %}
+    <h2>
+        Please <a href="{% url 'user_login' %}">Log In</a> to Access and Enjoy
+        All of Our Features.
+    </h2>
+    {% endif %}
 </div>
 {% endblock %}
