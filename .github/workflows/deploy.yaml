@@ -31,6 +31,9 @@ jobs:
             - name: Migrate
               run: python3 manage.py migrate
 
+            - name: Install pa_autoconfigure.py
+              run: wget https://www.pythonanywhere.com/overlays/www.pythonanywhere.com/htdocs/pa/overlays/packages/bundles/pa/autoconfigure.py
+
             - name: Deploy to PythonAnywhere
               run: |
                   # Use PythonAnywhere Web app's API token and URL
