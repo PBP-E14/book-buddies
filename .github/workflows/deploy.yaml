@@ -32,7 +32,7 @@ jobs:
               run: python3 manage.py migrate
 
             - name: Install pa_autoconfigure.py
-              run: pip3.6 install --user pythonanywhere
+              run: pip install --user pythonanywhere
 
             - name: Deploy to PythonAnywhere
               run: |
