@@ -40,36 +40,45 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js">
-
+    </script>
+    <script>
         async function getWishlists() {
             return fetch("{% url 'wishlist:get_wishlist' %}").then((res) => res.json())
         }
 
         async function refreshWishlists() {
             document.getElementById("wishlist").innerHTML = ""
-            const wishlists = await getWishlists()
+            const {wishlists, books} = await getWishlists()
+            let dateAdded = []; // Initialize the variable to store the date_added
+            let i = 0
+            for (const item of JSON.parse(wishlists)) {
+                dateAdded[i] = item.fields.date_added;
+                i++;
+            }
+
             let htmlString = `
             `
-            wishlists.forEach((wishlist) => {
+            JSON.parse(books).forEach((book, idx) => {
+                console.log(book)
                 htmlString += `
                 <div class="col-md-4 mb-4">
                     <div class="card {% if wish.is_achieved %}light-green{% else %}light-red{% endif %}">
                     <img
-                        src="${wishlist.fields.book.fields.image_cover}"
+                        src="${book.fields.image_cover}"
                         class="card-img-top"
                         style="height: 18rem; object-fit: cover"
-                        alt="${wishlist.fields.book.fields.title} image"
+                        alt="${book.fields.title} image"
                     />
                         <div class="card-body">
-                            <p class="m-0">by: ${wishlist.fields.book.fields.author}</p>
-                            <p class="m-0">publisher: ${wishlist.fields.book.fields.publisher}</p>
-                            <p class="m-0">year: ${wishlist.fields.book.fields.year_publication}</p>
+                            <p class="m-0">by: ${book.fields.author}</p>
+                            <p class="m-0">publisher: ${book.fields.publisher}</p>
+                            <p class="m-0">year: ${book.fields.year_publication}</p>
                             <a>
-                                <button type="submit" class="btn btn-outline-danger btn-sm edit-item-btn" onclick="removeWishlist(${wishlist.pk})">Remove</button>
+                                <button type="submit" class="btn btn-outline-danger btn-sm edit-item-btn" onclick="removeWishlist(${book.pk})">Remove</button>
                             </a>
                         </div>
                         <div class="card-footer text-muted">
-                            Created: ${wishlist.fields.date_added}
+                            Created: ${dateAdded[idx]}
                         </div>
                     </div>
                 </div>
@@ -81,13 +90,12 @@
 
         refreshWishlists()
 
-        function removeWishlist(wishlist_id) {
-            fetch(`remove_wishlist/${wishlist_id}/`, {
-                method: "DELETE",
-            }).then(refreshWishlists)
-            return false
+        async function removeWishlist(id) {
+        await fetch(`/wishlist/remove_wishlist/${id}/`, {
+            method: "DELETE",
+        }).then(refreshBooks);
         }
-    </script>
+        </script>
 </body>
 </html>
 {% endblock %}
