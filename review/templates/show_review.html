@@ -62,6 +62,9 @@
         background-color: #0077b6;
     }
 
+    .modal-footer #closemodal {
+        background-color: #0077b6;
+    }
     </style>
 </head>
 <body>
@@ -86,39 +89,45 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" id="closemodal" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Review</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <h1 class ="text-center">Book Review</h1>
+    <h1 class ="text-center display-3">Book Review</h1>
     <div class="container">
         <div class="row g-3">
             <form id="selectForm">
-                <div class="col-12 col-md-4"> <!-- Adjust the column width based on your design -->
-                    <select id="select" class="form-select" aria-label="Default select example" name="select_option" onchange="refreshReviews(this)">
+                <div class="col-12 col-md-3 mx-auto "> <!-- Adjust the column width based on your design -->
+                    {% if user.is_authenticated %}
+                    <select id="select" class="form-select text-center mb-2" aria-label="Default select example" name="select_option" onchange="refreshReviews(this)">
                         <option value="1" selected >All review</option>
                         <option value="2">Your review</option>
                     </select>
+                    {%endif%}
                 </div>
             </form>
-            <div class = "text-left mb-2 mt-2">
-                <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
-            </div>
         </div>
     </div>
 
     <div class = "container">
             {% if reviews|length > 0 %}
+                {% if user.is_authenticated %}
+                <div class = "text-left mb-2 mt-2 text-center">
+                    <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+                </div>
+                {%endif%}
             <div id="review_list" class="row g-3"></div>
             {% else %}
             <div class="text-center">
                 <h3>No book has been reviewed yet</h3>
-                <div class = "text-center mb-2 mt-2">
+                {% if user.is_authenticated %}
+                <div class = "text-center mb-2 mt-2 text-center">
                     <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
                 </div>
+                {%endif%}
             </div>
             {% endif %}
         </div>
@@ -137,11 +146,11 @@
     }
 
     // Function to add review 
-    function addReview() {
+    async function addReview() {
         fetch("{% url 'add_review_ajax' %}", {
             method: "POST",
             body: new FormData(document.querySelector('#form'))
-        }) .then (refreshReviews)
+        }) .then (refreshReviews(selectedValue={value:1}))
         document.getElementById("form").reset()
         return false
     }
@@ -173,7 +182,7 @@
         document.getElementById("review_list").innerHTML = htmlString
     }
 
-    refreshReviews();
+    refreshReviews(selectedValue={value:1});
 
 </script>
 
