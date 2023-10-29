@@ -1,11 +1,11 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
-from . import views
+from users.views import user_login, user_profile, register, update_profile, delete_book, filter_books
 
 urlpatterns = [
-    path('login/', views.user_login, name='user_login'),
-    path('register/', views.register, name='register'),
-    path('profile/', views.user_profile, name='user_profile'),
-    path('update_profile/', views.update_profile, name='update_profile'),
-    path('delete-book/<int:book_id>/', views.delete_book, name='delete_book'),
+    path('login/', user_login, name='user_login'),
+    path('register/', register, name='register'),
+    path('profile/', user_profile, name='user_profile'),
+    path('update_profile/', update_profile, name='update_profile'),
+    path('delete-book/<int:book_id>/', delete_book, name='delete_book'),
+    path('filter_books/', filter_books, name='filter_books'),
 ]
