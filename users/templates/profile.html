@@ -5,10 +5,12 @@
 
 <header>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="{% static 'profile_style.css' %}">
-    <div class="container-fluid bg-primary text-white py-2">
+    <script type="text/javascript" src="{% static 'profile.js' %}"></script>
+    <div class="container-fluid bg-secondary text-white py-2">
         <div class="container">
-            <h1>Book Buddies</h1>
+            <h1>User Profile Page</h1>
             <a href="{% url 'homepage' %}" class="btn btn-custom">
                 <i class="bi bi-house-door"></i>Homepage
             </a>
@@ -76,20 +78,58 @@
                     </form>
                 </div>
             </div>
-        <!-- History Books -->
-        <div class="col-md-3">
-            <!-- Bakal diisi buku-buku yang sudah pernah dibaca -->
-        </div>
+            <div class="col-md-5">
+                <br>
+                <div class="d-flex align-items-center">
+                    <h4>Books You Have Read</h4>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-arrows-expand-vertical custom-bold-icon" viewBox="0 0 20 20">
+                        <path d="M8 15a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5ZM.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708l-2-2ZM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8Z"/>
+                    </svg>
+                </div>
+
+                <form id="filter-form" method="get">
+                    <div class="form-group">
+                        <label for="selected_year_range">Year Range:</label>
+                        <select class="form-control" name="selected_year_range" id="selected_year_range">
+                            <option value="1975-2004">All Years</option>
+                            <option value="1975-1979">1975-1979</option>
+                            <option value="1980-1984">1980-1984</option>
+                            <option value="1985-1989">1985-1989</option>
+                            <option value="1990-1994">1990-1994</option>
+                            <option value="1995-1999">1995-1999</option>
+                            <option value="2000-2004">2000-2004</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-info">Filter</button>
+                </form>                
+
+                <div class="scrolling-container">
+                    <div class="card-columns" id="book-container">
+                        {% for book in user_books %}
+                        <div class="card" id="book-{{ book.id }}">
+                            <img src="{{ book.image_cover }}" class="card-img-top" alt="{{ book.title }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ book.title }}</h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Author: {{ book.author }}</li>
+                                <li class="list-group-item">Publisher: {{ book.publisher }}</li>
+                                <li class="list-group-item">Year: {{ book.year_publication }}</li>
+                            </ul>
+                            <div class="card-body">
+                                <a href="{% url 'delete_book' book.id %}" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-journal-minus"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p>You have not read any books yet.</p>
+                        {% endfor %}
+                </div>
+            </div>    
+        </div>              
     </div>
 </body>
-
-<footer style="width: 100%; clear: both;">
-    <div class="container-fluid text-white py-3">
-        <div class="container text-center">
-            <p>&copy; 2023 Book Buddies. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
 
 
 <!-- Success Modal -->
@@ -128,28 +168,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Messages</h5>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info" id="messageContent">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    document.getElementById('userProfileForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        fetch('{% url "update_profile" %}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-            } else {
-                var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
-                errorModal.show();
-            }
-        });
-    });
+    var updateProfileUrl = "{% url 'update_profile' %}";
+    const filterUrl = "{% url 'filter_books' %}";
 </script>
 
 {% endblock %}

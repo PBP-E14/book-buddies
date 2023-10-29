@@ -1,0 +1,47 @@
+.content {
+    background-color:#FFFFFF; 
+    color:black; 
+    padding-inline: 30px; 
+    padding-block: 20px;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left {
+    order: 1; /* Reverses the order to put it on the left */
+}
+
+.right {
+    order: 2;
+}
+
+h6 {
+    color: gray;
+}
+
+#date {
+    color: gray;
+    text-align: end;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td {
+    border-block-end: 1px solid gray;
+    padding: 8px;
+}
+
+.replies {
+    margin-block-start: 15px;
+}
+
+.display-content {
+    display: flex;
+}

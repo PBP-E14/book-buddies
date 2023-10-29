@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'read_page_style.css' %}">
+    <script type="text/javascript" src="{% static 'read_page.js' %}" defer></script>
+</head>
+
+<body>
+    <div id="forum-data" data-role="{{ forum.pk }}"></div>
+    <div id="current-user" data-role="{{ user.pk }}"></div>
+    <div id="user-role" data-role="{{ user.is_staff }}"></div>
+
+    <div class="content wrapper">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url 'back_to_homepage' %}">Home</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'show_forums' %}">Forum List</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Forum</li>
+            </ol>
+        </nav>
+        <table>
+            <tr>
+                <td>
+                    {% if user.is_staff %}
+                        <h2>{{ forum.title }} <button type="button" class="btn btn-outline-danger" onclick="removeForum(`{{ forum.pk }}`)">Delete</button></h2>
+                    {% else %}
+                        <h2>{{ forum.title }}</h2>
+                    {% endif %}
+                    <h6>Posted by: {{ forum.user.username }}</h6>
+                </td>
+                <td>
+                    <div class="text-end">
+                        <a>
+                            <button type="button" class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin-block-start: 15px;">
+                                Reply
+                            </button>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p style="padding-bottom: 0px;">{{ forum.content }}</p>
+                    <p id="date">Posted on: {{ forum.created_at }}</p>
+                </td>
+            </tr>
+        </table>
+        <div id="reply_list"></div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: lightblue;">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Reply</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="button_close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="description" class="col-form-label">Reply:</label>
+                            <textarea class="form-control form-color" id="content" name="content" style="height: 300px;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="button_close" data-bs-dismiss="modal" id="button_close">Close</button>
+                    <button type="button" class="btn btn-success" id="button_add" data-bs-dismiss="modal">Reply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

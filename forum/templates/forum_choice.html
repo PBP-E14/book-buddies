@@ -1,33 +1,68 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if forums|length > 0 %}
-    <h3>Forum Terkini:</h2>
-    {% for forum in forums %}
-        <div class="card" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">{{ forum.title }}</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">Posted by: {{ forum.user.username }}</h6>
-                <p class="card-text">{{ text|slice:":200" }}{% if text|length > 200 %}{{ forum.content }}{% endif %}</p>
-                <a href=#>
-                    <button type="button" class="btn btn-info">Open Forum</button>
-                </a>
-                <p class="card-text">{{ forum.created_at }}</p>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'forum_page_style.css' %}">
+        <script type="text/javascript" src="{% static 'forum_page.js' %}" defer></script>
+    </head>
+
+    <body>
+        <div class="content wrapper">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'back_to_homepage' %}">Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Forum List</li>
+                </ol>
+            </nav>
+            <div class="container-out">
+                <div class="left">
+                    <h6>Choice of Forum</h6>
+                    <div class="btn-group-vertical" role="group" aria-label="Vertical radio toggle button group" style="width: 100%; padding-block-end: 10px;">
+                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio1" value="1" autocomplete="off" onclick="selectForums(1)" checked>
+                        <label class="btn btn-outline-warning" for="vbtn-radio1">All</label>
+                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio2" value="2" autocomplete="off" onclick="selectForums(2)">
+                        <label class="btn btn-outline-warning" for="vbtn-radio2">No Reply</label>
+                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio3" value="3" autocomplete="off" onclick="selectForums(3)">
+                        <label class="btn btn-outline-warning" for="vbtn-radio3">Replied</label>
+                        <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio4" value="4" autocomplete="off" onclick="selectForums(4)">
+                        <label class="btn btn-outline-warning" for="vbtn-radio4">Your Forum</label>
+                    </div>
+                </div>
+                <div class="right" id="forum_table"></div>
             </div>
         </div>
-    {% endfor %}
-    <a href=#>
-        <button type="button" class="btn btn-info">Tambah Forum</button>
-    </a>
-    
-{% else %}
-    <div style="align-items: center;">
-        <h3>Belum ada forum yang di post.</h3>
-        <a href=#>
-            <button type="button" class="btn btn-info">Tambah Forum</button>
-        </a>
-    </div>
-{% endif %}
 
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: lightblue;">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Forum</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="button_close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form" onsubmit="return false;">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="name" class="col-form-label">Title:</label>
+                                <input type="text" class="form-control form-color" id="title" name="title"></input>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="col-form-label">Content:</label>
+                                <textarea class="form-control form-color" id="content" name="content" style="height: 300px;"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="button_close" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" id="button_add" data-bs-dismiss="modal">Add Forum</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div id="modal-for-edit"></div>
+    </body>
+</html>
 {% endblock %}

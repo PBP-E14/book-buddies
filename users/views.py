@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from book.models import Book
 from .models import User
-from django.core.files.storage import FileSystemStorage
+from django.shortcuts import get_object_or_404
+from django.contrib import messages
+from django.db.models import Q
 
 def register(request):
     if request.method == 'POST':
@@ -20,7 +24,7 @@ def register(request):
 
         errors = {}
 
-        # Validate data manually
+        # Validate data 
         if User.objects.filter(username=username).exists():
             errors['username'] = ['Username already exists.']
 
@@ -59,12 +63,27 @@ def register(request):
 
     return render(request, 'register.html')
 
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('homepage')
+        else:
+            messages.error(request, 'Sorry, incorrect username or password. Please try again.')
+    context = {}
+    return render(request, 'login.html', context)
 
+@login_required
 def user_profile(request):
     user = request.user
     user.birth_date_str = user.birth_date.strftime('%Y-%m-%d') if user.birth_date else ''
+    user_books = request.user.history_books.all()
     context = {
-        'user': user
+        'user': user,
+        'user_books': user_books,
     }
     return render(request, 'profile.html', context)
 
@@ -80,3 +99,57 @@ def update_profile(request):
         user.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
+def delete_book(request, book_id):
+    user = request.user
+    try:
+        book = get_object_or_404(Book, id=book_id)
+        user.history_books.remove(book)
+    except Book.DoesNotExist:
+        pass
+
+    return redirect('user_profile')
+
+
+@login_required
+def filter_books(request):
+    year_range = request.GET.get('selected_year_range', None)
+
+    # Filter books based on the user's history_books
+    user_books = request.user.history_books.all()
+
+    if year_range is not None:
+        start_year, end_year = map(int, year_range.split('-'))
+
+        # Filter books that match the year range and are in the user's history_books
+        filtered_books = Book.objects.filter(
+            Q(year_publication__gte=start_year) &
+            Q(year_publication__lte=end_year) &
+            Q(pk__in=user_books)
+        )
+    else:
+        # Display all books that are in the user's history_books
+        filtered_books = user_books
+
+    book_data = [
+        {
+            'title': book.title,
+            'author': book.author,
+            'publisher': book.publisher,
+            'year': book.year_publication,
+            'image_cover': book.image_cover
+        }
+        for book in filtered_books
+    ]
+
+    if not book_data:
+        # If no books are found, return a message with the selected year range
+        if year_range:
+            message = f'No books found in the year range {year_range}.'
+        else:
+            message = 'No books found in your history.'
+
+        messages.info(request, message) 
+        return JsonResponse({'message': message, 'status': 'no_books'})
+
+    return JsonResponse({'books': book_data, 'status': 'success'})

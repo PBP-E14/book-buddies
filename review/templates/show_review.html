@@ -1,0 +1,190 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+<head>
+    <style>
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    
+    .container {
+        flex: 1;
+    }
+    
+    footer {
+        width: 100%;
+        background: #3E4C5E;
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+        margin-top: 20px;
+    }   
+
+    .card {
+        margin-right: 10%;
+        margin-left: 10%;
+        height: 200px;
+    }
+    
+    .card::-webkit-scrollbar{
+        display: none;
+    }
+    .card-text {
+        padding: 2.5%;
+    }
+
+    button {
+        transition: .10s all;
+    }
+
+    button:hover {
+        font-weight: bold;
+        border-radius: 5px;
+    }
+
+    .modal-header {
+        background-color: #48cae4;
+        color: white;
+    }
+
+    .modal-body {
+        background-color: #caf0f8;
+    }
+
+    .modal-footer {
+        background-color: #48cae4;
+        color: white;
+    }
+
+    .modal-footer #button_add {
+        background-color: #0077b6;
+    }
+
+    .modal-footer #closemodal {
+        background-color: #0077b6;
+    }
+    </style>
+</head>
+<body>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Book Review</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="col-form-label">Title:</label>
+                            <input type="title" class="form-control" id="title" name="title"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="review" class="col-form-label">Review:</label>
+                            <textarea class="form-control" id="review" name="review"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="closemodal" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h1 class ="text-center display-3">Book Review</h1>
+    <div class="container">
+        <div class="row g-3">
+            <form id="selectForm">
+                <div class="col-12 col-md-3 mx-auto "> <!-- Adjust the column width based on your design -->
+                    {% if user.is_authenticated %}
+                    <select id="select" class="form-select text-center mb-2" aria-label="Default select example" name="select_option" onchange="refreshReviews(this)">
+                        <option value="1" selected >All review</option>
+                        <option value="2">Your review</option>
+                    </select>
+                    {%endif%}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class = "container">
+            {% if reviews|length > 0 %}
+                {% if user.is_authenticated %}
+                <div class = "text-left mb-2 mt-2 text-center">
+                    <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+                </div>
+                {%endif%}
+            <div id="review_list" class="row g-3"></div>
+            {% else %}
+            <div class="text-center">
+                <h3>No book has been reviewed yet</h3>
+                {% if user.is_authenticated %}
+                <div class = "text-center mb-2 mt-2 text-center">
+                    <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+                </div>
+                {%endif%}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+
+<script>
+    // get all the reviews
+    async function getReviews(option) {
+        return fetch(`/review/get_review_id/${option.value}/`).then((res) => res.json());
+    }
+
+    // get all the user
+    async function getUsernames() {
+        return fetch("{% url 'get_user_json' %}").then((res) => res.json())
+    }
+
+    // Function to add review 
+    async function addReview() {
+        fetch("{% url 'add_review_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }) .then (refreshReviews(selectedValue={value:1}))
+        document.getElementById("form").reset()
+        return false
+    }
+    document.getElementById("button_add").onclick = addReview
+
+    // Refresh the card
+    async function refreshReviews(selectedValue={value:1}) {
+        document.getElementById("review_list").innerHTML = ""
+        const reviews= await getReviews(selectedValue)
+        let htmlString = ``
+        const users = await getUsernames()
+        reviews.forEach((review) => {
+            var username = ``
+            users.forEach((user) => {
+                if (user.pk == `${review.fields.user}`) {
+                    username += `${user.fields.username}`
+                }
+            })
+            htmlString += `
+            <div class="col-12 col-md-6 col-lg-4 mx-auto">
+                <div class="card overflow-auto text-center border-dark">
+                    <h5 class="card-header card-title bg-info text-white">${review.fields.title}</h5>
+                    <h6 class="card-subtitle mt-2 mb-2 text-muted ">${review.fields.date}, created by ${username}</h6>
+                    <p class="card-text">${review.fields.review}</p>
+                </div>
+            </div>`;
+        });
+        
+        document.getElementById("review_list").innerHTML = htmlString
+    }
+
+    refreshReviews(selectedValue={value:1});
+
+</script>
+
+
+{% endblock %}

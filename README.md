@@ -18,24 +18,28 @@ Aplikasi kami juga ada user profile page yang menampilkan data user seperti nama
 
 ## Daftar dan Deskripsi Modul dalam Aplikasi :calling:
 
-### 💬 Forum Diskusi 
-Cara kerja forum diskusi pada aplikasi kami sebenarnya mirip dengan forum diskusi di kebanyakan aplikasi. Setiap pengguna dapat mengirimkan pesan dan terdapat beberapa pilihan diskusi yang dapat dipilih pengguna. Pilihan diskusi dapat ditambahkan oleh semua user. Tampilan pada fitur ini adalah massage-massage box yang berisi pesan-pesan para pengguna.
+### 💬 Forum Diskusi (Rizky Prawira Negoro)
+Cara kerja forum diskusi pada aplikasi kami sebenarnya mirip dengan forum diskusi di kebanyakan aplikasi. Setiap pengguna dapat mengirimkan pesan dan terdapat beberapa pilihan diskusi yang dapat dipilih pengguna. Pilihan diskusi dapat ditambahkan oleh semua user. Tampilan pada fitur ini adalah massage-massage box yang berisi pesan-pesan para pengguna. Pada forum terdapat fitur hapus forum dan menghapus balasan forum yang hanya dapat dilakukan oleh user yang memiliki role admin
 
-### :books: Katalog buku
+### :books: Katalog buku (Irfan Kamil)
 Berisi kumpulan buku dan detail dari buku tersebut. Kumpulan buku dapat ditambah, kurang, dan edit dengan admin.
 
-### 🧾 Review
+### 🧾 Review (Hilmy Ammar Darmawan)
 User dapat memberikan ulasan terhadap suatu buku yang telah dibacanya. Selain itu, User juga dapat membaca ulasan-ulasan yang telah diberikan oleh user lain.
 
-### 🔖 Wishlist 
+### 🔖 Wishlist (Rizki Ariffudin)
 Dapat diakses ketika terdapat logged in user. Wishlist akan menampilkan tabel yang berisi judul buku, penulis, tahun terbit, penerbit, dan tautan (shortlink) ke fitur perpustakaan.
 
-### :man_office_worker: User profile page
+### :man_office_worker: User profile page (Kilau Nisrina Akhyaari)
 Menampilkan data user seperti nama, gender, nomor telepon, email, alamat, tanggal lahir, dan bio. User bisa mengubah data pada halaman ini. User juga bisa melihat buku-buku yang sudah pernah ia baca pada bagian history.
 
 # :briefcase: Daftar model
 ### User: 
 nama, gender, nomor telepon, email, alamat, tanggal lahir, buku yang pernah dibaca, password
+### Forum:
+Judul forum, konten forum, user pembuat forum, dan tanggal pembuatan forum
+### Reply:
+Konten balasan, user pembuat reply, forum yang di reply
 ### Message: 
 Tipe diskusi, Tanggal Upload, Jumlah Balasan
 ### Review: 
