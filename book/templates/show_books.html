@@ -99,7 +99,7 @@
     }
 
     async function getWishlist() {
-        const result = await fetch("{% url 'wishlist:get_wishlist' %}").then(
+        const result = await fetch("{% url 'wishlist:get_wishlist_book' %}").then(
             (res) => res.json()
         );
 

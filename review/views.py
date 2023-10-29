@@ -6,6 +6,8 @@ from review.models import Review
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from users.models import User
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 def show_review(request):
@@ -43,3 +45,7 @@ def add_review_ajax(request):
         return HttpResponse(b"CREATED", status=201)
 
     return HttpResponseNotFound()
+
+def get_user(request):
+    users = User.objects.all()
+    return HttpResponse(serializers.serialize('json', users))

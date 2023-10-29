@@ -19,6 +19,7 @@
         color: white;
         text-align: center;
         padding: 10px 0;
+        margin-top: 20px;
     }
 
     nav {
@@ -30,32 +31,60 @@
         margin-left: 2.5%;
         padding: 2.5%;
     }
+    
+    #ajaxbutton {
+        transition: .2s all;
+    }
+
+    #ajaxbutton:hover {
+        font-weight: bold;
+        border-radius: 5px;
+    }
     </style>
 </head>
 <body>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Book Review</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="col-form-label">Title:</label>
+                            <input type="title" class="form-control" id="title" name="title"></input>
+                        </div>
+                        <div class="mb-3">
+                            <label for="review" class="col-form-label">Review:</label>
+                            <textarea class="form-control" id="review" name="review"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="button_add" data-bs-dismiss="modal">Add Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <h1 class ="text-center">Book Review</h1>
+    <div class = "text-center mb-2">
+        <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+    </div>
     <div class = "container">
-        <div class = "row g-3">
             {% if reviews|length > 0 %}
-                {% for review in reviews %}
-                <div class="col-12 col-md-6 col-lg-4 mx-auto">
-                    <div class="card text-center">
-                        <h5 class="card-title">{{ review.title }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ review.date }}, created by {{ review.user }} </h6>
-                        <p class="card-text">{{ review.review }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-                <a href="{% url 'create_review' %}">
-                    <button type="button" class="btn btn-primary btn-lg">Add review</button>
-                </a>
+            <div id="review_list" class="row g-3"></div>
             {% else %}
-                <div class="text-center">
-                    <h3>No book has been reviewed yet</h3>
-                    <a href="{% url 'create_review' %}">
-                        <button type="button" class="btn btn-primary btn-lg">Add review</button>
-                    </a>
+            <div class="text-center">
+                <h3>No book has been reviewed yet</h3>
+                <div class = "text-center mb-2">
+                    <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
                 </div>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -63,8 +92,57 @@
 
 <script>
     async function getReviews() {
-        return fetch("{% url 'get_review_json' %}").then((res) => res.json())
+        return fetch("{% url 'get_review_json' %}").then((res) => res.json());
     }
+
+    async function getUserName(userId) {
+        try {
+            const response = await fetch(`/get_user_name/${userId}/`);
+            if (response.ok) {
+                const data = await response.json();
+                return data.username;
+            } else {
+                // Handle the response if it's not successful, e.g., user not found
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching username:", error);
+            return null;
+        }
+    }
+
+    function addReview() {
+        fetch("{% url 'add_review_ajax' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }) .then (refreshReviews)
+        document.getElementById("form").reset()
+        return false
+    }
+    document.getElementById("button_add").onclick = addReview
+
+    async function refreshReviews() {
+        document.getElementById("review_list").innerHTML = ""
+        const reviews= await getReviews()
+        let htmlString = ``
+        
+        for (const review of reviews) { 
+            htmlString += `
+            <div class="col-12 col-md-6 col-lg-4 mx-auto">
+                <div class="card text-center">
+                    <h5 class="card-title">${review.fields.title}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${review.fields.date}, created by ${review.fields.user} </h6>
+                    <p class="card-text">${review.fields.review}</p>
+                </div>
+            </div>`;
+        }
+        
+        document.getElementById("review_list").innerHTML = htmlString
+    }
+
+    refreshReviews(); 
+    
 </script>
+
 
 {% endblock %}

@@ -1,0 +1,88 @@
+.content {
+    background-color:#FFFFFF; 
+    color:black; 
+    padding-inline: 30px; 
+    padding-block: 20px;
+    width: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    overflow: auto;
+}
+
+.outer-td{
+    border-block: 0px;
+    padding: 8px;
+}
+
+.table-row-button {
+    cursor: pointer;
+    background-color: white;
+}
+
+.table-row-button:hover {
+    background-color: lightgray;
+}
+
+td {
+    border-block: 1px solid gray;
+    padding: 8px;
+}
+
+#reply-info {
+    text-align: center;
+    color: gray;
+}
+
+h6 {
+    color: grey;
+}
+
+#date {
+    color: grey;
+    text-align: end;
+}
+
+.add-forum-btn {
+    align-items: center;
+}
+
+.container-out {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.left {
+    width: 20%;
+    order: 1; /* Reverses the order to put it on the left */
+}
+
+.right {
+    width: 78%;
+    order: 2;
+}
+
+@media screen and (max-width: 810px) {
+    .container-out {
+        display: flex;
+        flex-direction: column; /* Stack items vertically */
+        justify-content: center; /* Align items to the top */
+        align-items: flex-start;
+    }
+
+    .left {
+        width: 100%;
+        order: 1;
+    }
+
+    .right {
+        width: 100%;
+        order: 2;
+    }
+}
