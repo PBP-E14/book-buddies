@@ -5,9 +5,8 @@ from django.urls import reverse
 from review.models import Review
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
 from users.models import User
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def show_review(request):
@@ -17,20 +16,14 @@ def show_review(request):
     }
     return render(request, "show_review.html", context)
 
-def create_review(request):
-    form = ReviewForm(request.POST or None)
-
-    if form.is_valid() and request.method == "POST":
-        review = form.save(commit=False)
-        review.user = request.user
-        review.save()
-        return HttpResponseRedirect(reverse('show_review'))
-
-    context = {'form': form}
-    return render(request, "create_review.html", context)
-
-def get_review_json(request):
-    reviews = Review.objects.all()
+@login_required
+def get_review_id(request, select_option):
+    if select_option == 1:
+        reviews = Review.objects.all()
+    elif select_option == 2:
+        reviews = Review.objects.filter(user=request.user)
+    else:
+        reviews = Review.objects.all() 
     return HttpResponse(serializers.serialize('json', reviews))
 
 @csrf_exempt
@@ -46,6 +39,6 @@ def add_review_ajax(request):
 
     return HttpResponseNotFound()
 
-def get_user(request):
+def get_user_json(request):
     users = User.objects.all()
     return HttpResponse(serializers.serialize('json', users))
