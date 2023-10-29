@@ -49,7 +49,6 @@ def get_wishlist_book(request):
 def create_ajax(request, book_id):
     if request.method == 'POST':
         try:
-            logger.debug("Debug message")
             book = Book.objects.get(pk=book_id)
  
         except Book.DoesNotExist:
