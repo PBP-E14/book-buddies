@@ -20,26 +20,48 @@
         text-align: center;
         padding: 10px 0;
         margin-top: 20px;
-    }
-
-    nav {
-        background: #00c4ff;
     }   
 
     .card {
-        margin-right: 2.5%;
-        margin-left: 2.5%;
-        padding: 2.5%;
+        margin-right: 10%;
+        margin-left: 10%;
+        height: 200px;
     }
     
-    #ajaxbutton {
-        transition: .2s all;
+    .card::-webkit-scrollbar{
+        display: none;
+    }
+    .card-text {
+        padding: 2.5%;
     }
 
-    #ajaxbutton:hover {
+    button {
+        transition: .10s all;
+    }
+
+    button:hover {
         font-weight: bold;
         border-radius: 5px;
     }
+
+    .modal-header {
+        background-color: #48cae4;
+        color: white;
+    }
+
+    .modal-body {
+        background-color: #caf0f8;
+    }
+
+    .modal-footer {
+        background-color: #48cae4;
+        color: white;
+    }
+
+    .modal-footer #button_add {
+        background-color: #0077b6;
+    }
+
     </style>
 </head>
 <body>
@@ -72,16 +94,29 @@
     </div>
 
     <h1 class ="text-center">Book Review</h1>
-    <div class = "text-center mb-2">
-        <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+    <div class="container">
+        <div class="row g-3">
+            <form id="selectForm">
+                <div class="col-12 col-md-4"> <!-- Adjust the column width based on your design -->
+                    <select id="select" class="form-select" aria-label="Default select example" name="select_option" onchange="refreshReviews(this)">
+                        <option value="1" selected >All review</option>
+                        <option value="2">Your review</option>
+                    </select>
+                </div>
+            </form>
+            <div class = "text-left mb-2 mt-2">
+                <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+            </div>
+        </div>
     </div>
+
     <div class = "container">
             {% if reviews|length > 0 %}
             <div id="review_list" class="row g-3"></div>
             {% else %}
             <div class="text-center">
                 <h3>No book has been reviewed yet</h3>
-                <div class = "text-center mb-2">
+                <div class = "text-center mb-2 mt-2">
                     <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
                 </div>
             </div>
@@ -91,26 +126,17 @@
 </body>
 
 <script>
-    async function getReviews() {
-        return fetch("{% url 'get_review_json' %}").then((res) => res.json());
+    // get all the reviews
+    async function getReviews(option) {
+        return fetch(`/review/get_review_id/${option.value}/`).then((res) => res.json());
     }
 
-    async function getUserName(userId) {
-        try {
-            const response = await fetch(`/get_user_name/${userId}/`);
-            if (response.ok) {
-                const data = await response.json();
-                return data.username;
-            } else {
-                // Handle the response if it's not successful, e.g., user not found
-                return null;
-            }
-        } catch (error) {
-            console.error("Error fetching username:", error);
-            return null;
-        }
+    // get all the user
+    async function getUsernames() {
+        return fetch("{% url 'get_user_json' %}").then((res) => res.json())
     }
 
+    // Function to add review 
     function addReview() {
         fetch("{% url 'add_review_ajax' %}", {
             method: "POST",
@@ -121,27 +147,34 @@
     }
     document.getElementById("button_add").onclick = addReview
 
-    async function refreshReviews() {
+    // Refresh the card
+    async function refreshReviews(selectedValue={value:1}) {
         document.getElementById("review_list").innerHTML = ""
-        const reviews= await getReviews()
+        const reviews= await getReviews(selectedValue)
         let htmlString = ``
-        
-        for (const review of reviews) { 
+        const users = await getUsernames()
+        reviews.forEach((review) => {
+            var username = ``
+            users.forEach((user) => {
+                if (user.pk == `${review.fields.user}`) {
+                    username += `${user.fields.username}`
+                }
+            })
             htmlString += `
             <div class="col-12 col-md-6 col-lg-4 mx-auto">
-                <div class="card text-center">
-                    <h5 class="card-title">${review.fields.title}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">${review.fields.date}, created by ${review.fields.user} </h6>
+                <div class="card overflow-auto text-center border-dark">
+                    <h5 class="card-header card-title bg-info text-white">${review.fields.title}</h5>
+                    <h6 class="card-subtitle mt-2 mb-2 text-muted ">${review.fields.date}, created by ${username}</h6>
                     <p class="card-text">${review.fields.review}</p>
                 </div>
             </div>`;
-        }
+        });
         
         document.getElementById("review_list").innerHTML = htmlString
     }
 
-    refreshReviews(); 
-    
+    refreshReviews();
+
 </script>
 
 
