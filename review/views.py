@@ -16,7 +16,6 @@ def show_review(request):
     }
     return render(request, "show_review.html", context)
 
-@login_required
 def get_review_id(request, select_option):
     if select_option == 1:
         reviews = Review.objects.all()
@@ -27,6 +26,7 @@ def get_review_id(request, select_option):
     return HttpResponse(serializers.serialize('json', reviews))
 
 @csrf_exempt
+@login_required
 def add_review_ajax(request):
     if request.method == 'POST':
         title = request.POST.get("title")
