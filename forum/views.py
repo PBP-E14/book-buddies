@@ -30,9 +30,6 @@ def read_forum(request, id):
     }
     return render(request, "read_forum.html", context)
 
-def back_to_homepage(request):
-    return render(request, "homepage.html")
-
 def get_forum_json(request, choice):
     if (choice == 1):
         forums = Forum.objects.all()

@@ -1,0 +1,36 @@
+.content {
+    background-color:#FFFFFF; 
+    color:black; 
+    padding-inline: 30px; 
+    padding-block: 20px;
+    width: 100%;
+}
+
+.light-red {
+    background-color: #ffdddd;
+}
+.light-green {
+    background-color: #ccffcc;
+}
+body {
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+}
+
+.card-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensure the container takes up the full height of the parent */
+}
+
+.card-container > div {
+    flex: 1; /* Allow the card to expand to fill the container */
+}
+
+.button {
+    border: 5px;
+}
+

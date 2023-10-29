@@ -22,7 +22,9 @@ async function refreshForums() {
     const forums = await getForums(selectedValue)
 
     const users = await getUsers()
-    var adminAccess = `{{ user.is_staff }}`
+    var userRoleElement = document.getElementById("user-role");
+    var userIsAdmin = userRoleElement.getAttribute("data-role");
+    console.log(userIsAdmin)
     let htmlString = ``
     if (forums.length > 0) {
         htmlString += `
@@ -59,7 +61,7 @@ async function refreshForums() {
                 `
             }
             htmlString += `</td>`
-            if (adminAccess == `True`) {
+            if (userIsAdmin == `True`) {
                 htmlString += `
                     <td>
                         <a>
