@@ -72,7 +72,7 @@ def user_login(request):
             login(request, user)
             return redirect('homepage')
         else:
-            messages.info(request, 'Sorry, incorrect username or password. Please try again.')
+            messages.error(request, 'Sorry, incorrect username or password. Please try again.')
     context = {}
     return render(request, 'login.html', context)
 
