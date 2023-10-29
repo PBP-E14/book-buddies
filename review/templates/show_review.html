@@ -19,6 +19,7 @@
         color: white;
         text-align: center;
         padding: 10px 0;
+        margin-top: 20px;
     }
 
     nav {
@@ -75,23 +76,14 @@
         <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
     </div>
     <div class = "container">
-        <div class="row g-3">
             {% if reviews|length > 0 %}
-                {% for review in reviews %}
-                <div class="col-12 col-md-6 col-lg-4 mx-auto">
-                    <div class="card text-center">
-                        <h5 class="card-title">{{ review.title }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ review.date }}, created by {{ review.user }} </h6>
-                        <p class="card-text">{{ review.review }}</p>
-                    </div>
-                </div>
-                {% endfor %}
+            <div id="review_list" class="row g-3"></div>
             {% else %}
             <div class="text-center">
                 <h3>No book has been reviewed yet</h3>
-                <a href="{% url 'create_review' %}">
-                    <button type="button" class="btn btn-primary btn-lg">Add review</button>
-                </a>
+                <div class = "text-center mb-2">
+                    <button id="ajaxbutton" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Review</button>
+                </div>
             </div>
             {% endif %}
         </div>
@@ -99,52 +91,56 @@
 </body>
 
 <script>
-    // fungsi refresh masih belum bisa
     async function getReviews() {
         return fetch("{% url 'get_review_json' %}").then((res) => res.json());
     }
 
-    async function refreshReviews() {
-        const reviewsContainer = document.getElementById("review_list");
-        reviewsContainer.innerHTML = ''; // Mengosongkan konten sebelum menambahkan yang baru
-
-        const reviews = await getReviews();
-
-        reviews.forEach((review) => {
-            const cardDiv = document.createElement("div");
-            cardDiv.className = "card text-center";
-
-            const cardTitle = document.createElement("h5");
-            cardTitle.className = "card-title";
-            cardTitle.textContent = review.fields.title;
-
-            const cardSubtitle = document.createElement("h6");
-            cardSubtitle.className = "card-subtitle mb-2 text-muted";
-            cardSubtitle.textContent = `${review.fields.date}, created by ${review.fields.user}`;
-
-            const cardText = document.createElement("p");
-            cardText.className = "card-text";
-            cardText.textContent = review.fields.review;
-
-            // Menyusun elemen-elemen HTML
-            cardDiv.appendChild(cardTitle);
-            cardDiv.appendChild(cardSubtitle);
-            cardDiv.appendChild(cardText);
-            reviewsContainer.appendChild(cardDiv);
-        });
+    async function getUserName(userId) {
+        try {
+            const response = await fetch(`/get_user_name/${userId}/`);
+            if (response.ok) {
+                const data = await response.json();
+                return data.username;
+            } else {
+                // Handle the response if it's not successful, e.g., user not found
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching username:", error);
+            return null;
+        }
     }
-
-    refreshReviews(); 
 
     function addReview() {
         fetch("{% url 'add_review_ajax' %}", {
             method: "POST",
             body: new FormData(document.querySelector('#form'))
-        })
+        }) .then (refreshReviews)
         document.getElementById("form").reset()
         return false
     }
     document.getElementById("button_add").onclick = addReview
+
+    async function refreshReviews() {
+        document.getElementById("review_list").innerHTML = ""
+        const reviews= await getReviews()
+        let htmlString = ``
+        
+        for (const review of reviews) { 
+            htmlString += `
+            <div class="col-12 col-md-6 col-lg-4 mx-auto">
+                <div class="card text-center">
+                    <h5 class="card-title">${review.fields.title}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">${review.fields.date}, created by ${review.fields.user} </h6>
+                    <p class="card-text">${review.fields.review}</p>
+                </div>
+            </div>`;
+        }
+        
+        document.getElementById("review_list").innerHTML = htmlString
+    }
+
+    refreshReviews(); 
     
 </script>
 
