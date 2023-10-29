@@ -19,7 +19,7 @@ Aplikasi kami juga ada user profile page yang menampilkan data user seperti nama
 ## Daftar dan Deskripsi Modul dalam Aplikasi :calling:
 
 ### 💬 Forum Diskusi 
-Cara kerja forum diskusi pada aplikasi kami sebenarnya mirip dengan forum diskusi di kebanyakan aplikasi. Setiap pengguna dapat mengirimkan pesan dan terdapat beberapa pilihan diskusi yang dapat dipilih pengguna. Pilihan diskusi dapat ditambahkan oleh semua user. Tampilan pada fitur ini adalah massage-massage box yang berisi pesan-pesan para pengguna.
+Cara kerja forum diskusi pada aplikasi kami sebenarnya mirip dengan forum diskusi di kebanyakan aplikasi. Setiap pengguna dapat mengirimkan pesan dan terdapat beberapa pilihan diskusi yang dapat dipilih pengguna. Pilihan diskusi dapat ditambahkan oleh semua user. Tampilan pada fitur ini adalah massage-massage box yang berisi pesan-pesan para pengguna. Pada forum terdapat fitur hapus forum dan menghapus balasan forum yang hanya dapat dilakukan oleh user yang memiliki role admin
 
 ### :books: Katalog buku
 Berisi kumpulan buku dan detail dari buku tersebut. Kumpulan buku dapat ditambah, kurang, dan edit dengan admin.
@@ -36,6 +36,10 @@ Menampilkan data user seperti nama, gender, nomor telepon, email, alamat, tangga
 # :briefcase: Daftar model
 ### User: 
 nama, gender, nomor telepon, email, alamat, tanggal lahir, buku yang pernah dibaca, password
+### Forum:
+Judul forum, konten forum, user pembuat forum, dan tanggal pembuatan forum
+### Reply:
+Konten balasan, user pembuat reply, forum yang di reply
 ### Message: 
 Tipe diskusi, Tanggal Upload, Jumlah Balasan
 ### Review: 
