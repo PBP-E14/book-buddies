@@ -1,27 +1,73 @@
 {% extends "base.html" %} {% block content %}
 
-<p>button wishlist, already read book</p>
-<p>view : has_read_bok, request nambah buku (user), acc req buku (admin)</p>
+<div class="modal fade" id="modalRequest" tabindex="-1" aria-labelledby="modalRequestLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalRequestLabel">Request Add Book</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form" onsubmit="return false;">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="col-form-label">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="author" class="col-form-label">Author:</label>
+                        <input type="text" class="form-control" id="author" name="author"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="publisher" class="col-form-label">Publisher:</label>
+                        <input type="text" class="form-control" id="publisher" name="publisher"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="year" class="col-form-label">Year:</label>
+                        <input type="number" class="form-control" id="year" name="year"></input>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image" class="col-form-label">Image Cover:</label>
+                        <input type="text" class="form-control" id="image" name="image"></input>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="add-request" data-bs-dismiss="modal">Add Request</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="d-flex flex-wrap justify-content-center gap-3 py-4">
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalRequest">Request Add Book</button>
+    <a href="history" class="btn btn-info">History Request Book</a>
+    {% if user.is_superuser %}
+        <a href="admin" class="btn btn-secondary">Admin</a>
+    {% endif %}
+</div>
 <div
     id="book-content"
-    class="d-flex flex-wrap justify-content-center gap-5"
+    class="d-flex flex-wrap justify-content-center gap-5 pb-4"
 ></div>
 
 <script>
     async function addWishlist(id) {
         await fetch(`/wishlist/create-ajax/${id}/`, {
             method: "POST",
-        }).then(refreshBooks());
+        }).then(refreshBooks);
     }
 
     async function removeWishlist(id) {
         await fetch(`/wishlist/remove_wishlist/${id}/`, {
             method: "DELETE",
-        }).then(refreshBooks());
+        }).then(refreshBooks);
     }
 
     async function readBook(id) {
-        await fetch(`/book/read-book/${id}`).then(refreshBooks());
+        await fetch(`/book/read-book/${id}`).then(refreshBooks);
     }
 
     async function getBooks() {
@@ -55,8 +101,13 @@
         return wishlist;
     }
 
+    async function deleteBook(id) {
+        await fetch(`/book/delete-book/${id}`, {method: 'DELETE'}).then(refreshBooks);
+    }
+
     async function refreshBooks() {
         document.getElementById("book-content").innerHTML = "";
+        const isSuperuser = {{ user.is_superuser | yesno:"true,false" }};
         htmlString = "";
         const books = await getBooks();
         const readBooks = await getReadBook();
@@ -97,14 +148,26 @@
                                 ? `<button class="btn btn-secondary w-100">Already Read</button>`
                                 : `<button onClick={readBook(${book.pk})} class="btn btn-success w-100">Read Book</button>`
                         }
+                        ${isSuperuser ? `<button onClick={deleteBook(${book.pk})} class="btn btn-danger w-100">Delete Book</button>` : ''}
                     </div>
                 </div>
             </div>
             `;
         });
-        console.log(books);
         document.getElementById("book-content").innerHTML = htmlString;
     }
+
+    function addRequest() {
+        fetch("{% url 'book:request_add_book' %}", {
+            method: "POST",
+            body: new FormData(document.querySelector('#form'))
+        }).then(refreshBooks)
+
+        document.getElementById("form").reset()
+        return false
+    }
+
+    document.getElementById("add-request").onclick = addRequest
 
     refreshBooks();
 </script>
