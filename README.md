@@ -1,4 +1,4 @@
-# 📚 Book Buddies 📚
+# 📚 Book Buddies 📚 (https://irfankamil.pythonanywhere.com/)
 
 # Anggota Kelompok :family:
 - Hilmy Ammar Darmawan – 2206081736 
@@ -57,3 +57,9 @@ https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset
 Dapat mengakses aplikasi dengan login maupun tidak login. Jika pengunjung login, maka Ia dapat mengakses semua fitur yang tersedia pada aplikasi. Akan tetapi, jika pengunjung tidak login, pengunjung memiliki akses yang terbatas pada fitur, yaitu hanya dapat mengakses halaman katalog buku dan forum (hanya bisa melihat, tidak bisa menambahkan post ke forum).
 ## Admin: 
 Hanya bisa mengubah katalog buku (create, edit, dan delete).
+
+Untuk akun admin atau superuser dapat menggunakan akun berikut:
+
+username: admin
+
+password: admin
