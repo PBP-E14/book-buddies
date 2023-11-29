@@ -27,6 +27,7 @@ urlpatterns = [
     path("book/", include("book.urls")),
     path("review/", include ("review.urls")),
     path('wishlist/', include('wishlist.urls')),
+    path('auth/', include('authentication.urls')),
 ]
 
 if settings.DEBUG:
