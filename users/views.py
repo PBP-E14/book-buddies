@@ -164,6 +164,8 @@ def show_json(request):
 
 
 def fetch_user_data(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'User not authenticated'}, status=401)
     user = request.user
 
     user_data = serialize('json', [user], fields=('username', 'email', 'gender', 'birth_date', 'phone_number', 'address', 'bio', 'history_books'))
@@ -180,7 +182,7 @@ def update_profile_flutter(request):
 
             # Update user profile
             user = request.user
-            user.gender = data.get('gender', user.gender)  # Use existing value as default
+            user.gender = data.get('gender', user.gender)  
             user.birth_date = data.get('birth_date', user.birth_date)
             user.phone_number = data.get('phone_number', user.phone_number)
             user.address = data.get('address', user.address)
