@@ -1,8 +1,12 @@
+import json
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.password_validation import validate_password
+from django.core import serializers
+from django.core.serializers import serialize
 from django.core.exceptions import ValidationError
 from book.models import Book
 from .models import User
@@ -153,3 +157,42 @@ def filter_books(request):
         return JsonResponse({'message': message, 'status': 'no_books'})
 
     return JsonResponse({'books': book_data, 'status': 'success'})
+
+def show_json(request):
+    data = User.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+
+def fetch_user_data(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'User not authenticated'}, status=401)
+    user = request.user
+
+    user_data = serialize('json', [user], fields=('username', 'email', 'gender', 'birth_date', 'phone_number', 'address', 'bio', 'history_books'))
+
+    return JsonResponse({'user_data': user_data})
+
+@login_required
+@csrf_exempt
+def update_profile_flutter(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from the request
+            data = json.loads(request.body)
+
+            # Update user profile
+            user = request.user
+            user.gender = data.get('gender', user.gender)  
+            user.birth_date = data.get('birth_date', user.birth_date)
+            user.phone_number = data.get('phone_number', user.phone_number)
+            user.address = data.get('address', user.address)
+            user.bio = data.get('bio', user.bio)
+            user.save()
+
+            return JsonResponse({'success': True})
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
