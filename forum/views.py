@@ -142,7 +142,24 @@ def create_reply_flutter(request):
         )
 
         new_product.save()
+        forum.save()
 
         return JsonResponse({"status": "success"}, status=200)
     else:
         return JsonResponse({"status": "error"}, status=401)
+    
+@csrf_exempt
+def delete_replies_flutter(request):
+    data = json.loads(request.body)
+    reply_id = data['reply_id']
+    try:
+        replies = Reply.objects.get(pk=reply_id)
+
+        forum = replies.forum_id
+        if forum.total_reply > 0:
+            forum.total_reply -= 1
+            forum.save()
+        replies.delete()
+        return JsonResponse({'message': 'REMOVED'}, status=204)
+    except replies.DoesNotExist:
+        return JsonResponse({'error': 'ForumReply not found'}, status=404)
