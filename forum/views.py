@@ -115,10 +115,30 @@ def create_forum_flutter(request):
         data = json.loads(request.body)
 
         new_product = Forum.objects.create(
-            user = request.user,
+            user = User.objects.get(pk=data["thisUser"]),
             title = data["title"],
             content = data["content"],
             total_reply = 0
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+@csrf_exempt
+def create_reply_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+        forum = Forum.objects.get(pk=data["thisForum"])
+        forum.total_reply += 1
+
+        new_product = Reply.objects.create(
+            user = User.objects.get(pk=data["thisUser"]),
+            content = data["content"],
+            forum_id = forum,
         )
 
         new_product.save()
