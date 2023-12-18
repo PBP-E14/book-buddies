@@ -12,5 +12,5 @@ urlpatterns = [
     path('json/', show_json, name='show_json'),
     path('fetch_user_data/', fetch_user_data, name='fetch_user_data'),
     path('update_profile_flutter/', update_profile_flutter, name='update_profile_flutter'),
-    path('user_admin_status/', user_admin_status, name='user_admin_status'),
+    path('user_admin_status/<int:user_id>/', user_admin_status, name='user_admin_status'),
 ]

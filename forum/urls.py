@@ -1,7 +1,7 @@
 from django.urls import path
 from forum.views import show_forums, read_forum, get_forum_json, add_forum_ajax, \
     get_reply_json, add_reply_ajax, get_user_json, remove_forum_button, remove_reply_button, show_json_forum, \
-    show_json_reply, show_json_reply_byId, create_forum_flutter, create_reply_flutter
+    show_json_reply, show_json_reply_byId, create_forum_flutter, create_reply_flutter, delete_replies_flutter
 
 urlpatterns = [
     path('show_forums/', show_forums, name='show_forums'),
@@ -18,4 +18,5 @@ urlpatterns = [
     path('show_json_reply_byId/<int:id>/', show_json_reply_byId, name='show_json_reply_byId'),
     path('create-forum-flutter/', create_forum_flutter, name='create_forum_flutter'),
     path('create-reply-flutter/', create_reply_flutter, name='create_reply_flutter'),
+    path('delete-replies-flutter/', delete_replies_flutter, name='delete_replies_flutter'),
 ]
