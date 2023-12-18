@@ -196,3 +196,10 @@ def update_profile_flutter(request):
             return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
+
+def user_admin_status(request):
+    user = request.user
+    is_admin = user.is_staff  # Check if the user is an admin or not
+    print(is_admin)
+
+    return JsonResponse({"is_admin": is_admin})

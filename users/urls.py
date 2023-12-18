@@ -1,5 +1,6 @@
 from django.urls import path
-from users.views import fetch_user_data, show_json, update_profile_flutter, user_login, user_profile, register, update_profile, delete_book, filter_books
+from users.views import fetch_user_data, show_json, update_profile_flutter, user_login, user_profile, register, \
+    update_profile, delete_book, filter_books, user_admin_status
 
 urlpatterns = [
     path('login/', user_login, name='user_login'),
@@ -11,4 +12,5 @@ urlpatterns = [
     path('json/', show_json, name='show_json'),
     path('fetch_user_data/', fetch_user_data, name='fetch_user_data'),
     path('update_profile_flutter/', update_profile_flutter, name='update_profile_flutter'),
+    path('user_admin_status/', user_admin_status, name='user_admin_status'),
 ]
