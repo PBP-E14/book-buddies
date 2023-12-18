@@ -83,3 +83,13 @@ def create_ajax(request, book_id):
         return JsonResponse({"message": "Book added to the wishlist"})
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+def get_wishlist_json(request):
+    wishlists = Wishlist.objects.all()
+    return HttpResponse(
+        serializers.serialize("json", wishlists), content_type="application/json"
+    )
+
+def get_json_by_id(request, id):
+    wishlists = Wishlist.objects.filter(pk=id)
+    return HttpResponse(serializers.serialize('json', wishlists))

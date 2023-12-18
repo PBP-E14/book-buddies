@@ -30,7 +30,4 @@ body {
     flex: 1; /* Allow the card to expand to fill the container */
 }
 
-.button {
-    border: 5px;
-}
 
