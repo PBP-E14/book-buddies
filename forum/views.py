@@ -162,4 +162,16 @@ def delete_replies_flutter(request):
         replies.delete()
         return JsonResponse({'message': 'REMOVED'}, status=204)
     except replies.DoesNotExist:
-        return JsonResponse({'error': 'ForumReply not found'}, status=404)
+        return JsonResponse({'error': 'Reply not found'}, status=404)
+    
+@csrf_exempt
+def delete_forum_flutter(request):
+    data = json.loads(request.body)
+    forum_id = data['forum_id']
+    try:
+        forum = Forum.objects.get(pk=forum_id)
+        forum.delete()
+
+        return JsonResponse({'message': 'REMOVED'}, status=204)
+    except forum.DoesNotExist:
+        return JsonResponse({'error': 'Forum not found'}, status=404)
