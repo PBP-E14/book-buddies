@@ -18,4 +18,5 @@ urlpatterns = [
     path("get-request-book/", views.get_request_book, name="get_request_book"),
     path("cancel-request/<int:id>/", views.cancelRequest, name="cancel_request"),
     path("accept-request/<int:id>/", views.acceptRequest, name="accept_request"),
+    path("check-superuser/", views.checkSuperUser, name="check_superuser"),
 ]
