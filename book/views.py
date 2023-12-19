@@ -1,4 +1,10 @@
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseNotAllowed
+import json
+from django.http import (
+    HttpResponse,
+    HttpResponseNotFound,
+    HttpResponseNotAllowed,
+    JsonResponse,
+)
 from django.core import serializers
 from django.shortcuts import render
 from .models import Book, RequestBook
@@ -121,3 +127,8 @@ def cancelRequest(request, id):
         return HttpResponse(status=200)
 
     return HttpResponseNotAllowed()
+
+
+def checkSuperUser(request):
+    result = {"is_superuser": request.user.is_superuser}
+    return JsonResponse(result)
