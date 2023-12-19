@@ -88,12 +88,13 @@ refreshReplies()
 function removeForum(forum_id) {
     fetch(`/forum/remove_forum_button/${forum_id}/`, {
         method: "DELETE",
-    }).then(window.location = "{% url 'show_forums' %}")
+    }).then(window.location = `/forum/show_forums/`)
     return false
 }
 
 function addReply() {
-    var id_forum = `{{ forum.pk }}`
+    var forumElement = document.getElementById("forum-data");
+    var id_forum = forumElement.getAttribute("data-role");
     fetch(`/forum/add_reply_ajax/${id_forum}/`, {
         method: "POST",
         body: new FormData(document.querySelector('#form'))

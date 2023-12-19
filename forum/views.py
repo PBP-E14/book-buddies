@@ -1,4 +1,5 @@
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+import json
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from forum.models import Forum, Reply
@@ -29,9 +30,6 @@ def read_forum(request, id):
         'reply_count' : len(replies)
     }
     return render(request, "read_forum.html", context)
-
-def back_to_homepage(request):
-    return render(request, "homepage.html")
 
 def get_forum_json(request, choice):
     if (choice == 1):
@@ -82,6 +80,18 @@ def get_user_json(request):
     users = User.objects.all()
     return HttpResponse(serializers.serialize('json', users))
 
+def show_json_forum(request):
+    data = Forum.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+def show_json_reply(request):
+    data = Reply.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
+def show_json_reply_byId(request, id):
+    data = Reply.objects.filter(forum_id=id)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
 @csrf_exempt
 def remove_forum_button(request, id):
     if request.method == 'DELETE':
@@ -97,3 +107,59 @@ def remove_reply_button(request, id):
         reply.delete()
         return HttpResponse(b"REMOVED", status=201)
     return HttpResponseNotFound()
+
+@csrf_exempt
+def create_forum_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_product = Forum.objects.create(
+            user = User.objects.get(pk=data["thisUser"]),
+            title = data["title"],
+            content = data["content"],
+            total_reply = 0
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+@csrf_exempt
+def create_reply_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+        forum = Forum.objects.get(pk=data["thisForum"])
+        forum.total_reply += 1
+
+        new_product = Reply.objects.create(
+            user = User.objects.get(pk=data["thisUser"]),
+            content = data["content"],
+            forum_id = forum,
+        )
+
+        new_product.save()
+        forum.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+    
+@csrf_exempt
+def delete_replies_flutter(request):
+    data = json.loads(request.body)
+    reply_id = data['reply_id']
+    try:
+        replies = Reply.objects.get(pk=reply_id)
+
+        forum = replies.forum_id
+        if forum.total_reply > 0:
+            forum.total_reply -= 1
+            forum.save()
+        replies.delete()
+        return JsonResponse({'message': 'REMOVED'}, status=204)
+    except replies.DoesNotExist:
+        return JsonResponse({'error': 'ForumReply not found'}, status=404)

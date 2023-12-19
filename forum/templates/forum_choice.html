@@ -9,10 +9,12 @@
     </head>
 
     <body>
+        <div id="user-role" data-role="{{ user.is_staff }}"></div>
+
         <div class="content wrapper">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="{% url 'back_to_homepage' %}">Home</a></li>
+                  <li class="breadcrumb-item"><a href="{% url 'homepage' %}">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Forum List</li>
                 </ol>
             </nav>

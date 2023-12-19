@@ -45,7 +45,6 @@ def get_wishlist(request):
     data = {"wishlists": wishlist_data, "books": book_data}
     return JsonResponse(data, safe=False)
 
-
 def get_wishlist_book(request):
     product_wishlist = Wishlist.objects.filter(user=request.user)
     data = []
