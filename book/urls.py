@@ -18,4 +18,11 @@ urlpatterns = [
     path("get-request-book/", views.get_request_book, name="get_request_book"),
     path("cancel-request/<int:id>/", views.cancelRequest, name="cancel_request"),
     path("accept-request/<int:id>/", views.acceptRequest, name="accept_request"),
+    path("check-superuser/", views.checkSuperUser, name="check_superuser"),
+    path(
+        "request-add-book-flutter/",
+        views.request_add_book_flutter,
+        name="request_add_book_flutter",
+    ),
+    path("get-book-flutter/", views.get_book_flutter, name="get_book_flutter"),
 ]
