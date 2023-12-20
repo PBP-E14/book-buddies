@@ -93,3 +93,15 @@ def get_wishlist_json(request):
 def get_json_by_id(request, id):
     wishlists = Wishlist.objects.filter(pk=id)
     return HttpResponse(serializers.serialize('json', wishlists))
+
+@csrf_exempt
+def delete_wishlist_flutter(request):
+    data = json.loads(request.body)
+    wishlist_id = data['wishlist_id']
+    try:
+        wishlist = Wishlist.objects.get(pk=wishlist_id)
+        wishlist.delete()
+
+        return JsonResponse({'message': 'REMOVED'}, status=204)
+    except wishlist.DoesNotExist:
+        return JsonResponse({'error': 'Forum not found'}, status=404)

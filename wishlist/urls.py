@@ -1,5 +1,5 @@
 from django.urls import path
-from wishlist.views import show_wishlist, remove_wishlist, get_wishlist, create_ajax, get_wishlist_book, get_wishlist_json, get_json_by_id
+from wishlist.views import show_wishlist, remove_wishlist, get_wishlist, create_ajax, get_wishlist_book, get_wishlist_json, get_json_by_id, delete_wishlist_flutter
 
 app_name = "wishlist"
 
@@ -11,4 +11,5 @@ urlpatterns = [
     path("get_wishlist_book/", get_wishlist_book, name="get_wishlist_book"),
     path("get_wishlist_json/", get_wishlist_json, name="get_wishlist_json"),
     path("json/<int:wishlist_id>/", get_json_by_id, name="get_json_by_id"),
+    path('delete-wishlist-flutter/', delete_wishlist_flutter, name='delete_wishlist_flutter'),
 ]
