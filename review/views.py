@@ -1,5 +1,6 @@
+import json
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, JsonResponse
 from review.forms import ReviewForm
 from django.urls import reverse
 from review.models import Review
@@ -25,6 +26,10 @@ def get_review_id(request, select_option):
         reviews = Review.objects.all() 
     return HttpResponse(serializers.serialize('json', reviews))
 
+def show_json_review(request):
+    data = Review.objects.all()
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+
 @csrf_exempt
 @login_required
 def add_review_ajax(request):
@@ -42,3 +47,21 @@ def add_review_ajax(request):
 def get_user_json(request):
     users = User.objects.all()
     return HttpResponse(serializers.serialize('json', users))
+
+@csrf_exempt
+def create_review_flutter(request):
+    if request.method == 'POST':
+        
+        data = json.loads(request.body)
+
+        new_product = Review.objects.create(
+            user = request.user,
+            title = data["title"],
+            review = data["review"]
+        )
+
+        new_product.save()
+
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
